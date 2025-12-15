@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Project Area & Invoice Calculator</title>
+    <meta name="theme-color" content="#0c3d42" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="app-header">
+        <div class="brand">
+          <img src="logo.svg" alt="Design Aurora logo" class="brand-mark" />
+          <div class="brand-text">
+            <span class="brand-title">Design Aurora</span>
+            <span class="brand-subtitle">Site · Elevation · Interior · Invoice</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="app-main">
+        <section class="card form-card">
+          <h2>Project Details</h2>
+          <form id="calculator-form">
+            <div class="grid two-cols">
+              <div class="field">
+                <label for="clientName">Client name</label>
+                <input id="clientName" type="text" placeholder="e.g. John Doe" />
+              </div>
+              <div class="field">
+                <label for="projectName">Project / Site name</label>
+                <input id="projectName" type="text" placeholder="e.g. Villa Renovation" />
+              </div>
+            </div>
+
+            <div class="grid three-cols">
+              <div class="field">
+                <label for="currency">Currency</label>
+                <select id="currency">
+                  <option value="₹" selected>INR (₹)</option>
+                  <option value="$">USD ($)</option>
+                  <option value="€">EUR (€)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="siteArea">Site area (sq ft)</label>
+                <input id="siteArea" type="number" min="0" step="0.01" placeholder="e.g. 1500" required />
+              </div>
+              <div class="field">
+                <label for="discount">Overall discount (%)</label>
+                <input id="discount" type="number" min="5" max="10" step="0.1" value="5" />
+                <p class="field-help">Standard client discount between 5% and 10%.</p>
+              </div>
+            </div>
+
+            <h3>Elevation</h3>
+            <div class="grid three-cols">
+              <div class="field">
+                <label for="elevationArea">Elevation area (sq ft)</label>
+                <input id="elevationArea" type="number" min="0" step="0.01" placeholder="Leave empty to use site area" />
+                <p class="field-help">If empty, site area will be used.</p>
+              </div>
+              <div class="field">
+                <label for="elevationRate">Elevation rate (per sq ft)</label>
+                <input id="elevationRate" type="number" min="0" step="0.01" value="5" />
+              </div>
+              <div class="field">
+                <label for="elevationNotes">Elevation notes (optional)</label>
+                <input id="elevationNotes" type="text" placeholder="e.g. 3D front elevation" />
+              </div>
+            </div>
+
+            <h3>Interior</h3>
+            <div class="grid three-cols">
+              <div class="field">
+                <label for="interiorArea">Interior area (sq ft)</label>
+                <input id="interiorArea" type="number" min="0" step="0.01" placeholder="Leave empty to use site area" />
+                <p class="field-help">If empty, site area will be used.</p>
+              </div>
+              <div class="field">
+                <label for="interiorRate">Interior rate (per sq ft)</label>
+                <input id="interiorRate" type="number" min="0" step="0.01" value="20" />
+              </div>
+              <div class="field">
+                <label for="interiorNotes">Interior notes (optional)</label>
+                <input id="interiorNotes" type="text" placeholder="e.g. Modular kitchen, wardrobes" />
+              </div>
+            </div>
+
+            <h3>Additional items (optional)</h3>
+            <div id="extra-items" class="extra-items"></div>
+            <button type="button" class="btn ghost" id="addItemBtn">+ Add item</button>
+
+            <div class="actions">
+              <button type="button" class="btn secondary" id="resetBtn">Clear</button>
+              <button type="submit" class="btn primary">Calculate & Generate Invoice</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="card invoice-card">
+          <div class="invoice-header">
+            <div class="invoice-brand">
+              <img src="logo.svg" alt="Design Aurora logo" class="brand-mark" />
+              <div>
+                <h2>Invoice</h2>
+                <p class="invoice-meta" id="invoiceProject">Project: –</p>
+                <p class="invoice-meta" id="invoiceClient">Client: –</p>
+              </div>
+            </div>
+            <div class="invoice-meta-group">
+              <p class="invoice-meta" id="invoiceDate"></p>
+              <p class="invoice-meta" id="invoiceId"></p>
+            </div>
+          </div>
+
+          <table class="invoice-table">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th class="numeric">Area (sq ft)</th>
+                <th class="numeric">Rate</th>
+                <th class="numeric">Amount</th>
+              </tr>
+            </thead>
+            <tbody id="invoiceBody">
+              <tr class="placeholder-row">
+                <td colspan="4">Fill in project details and click “Calculate & Generate Invoice”.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="invoice-summary">
+            <div class="summary-row">
+              <span>Subtotal</span>
+              <span id="subtotalValue">–</span>
+            </div>
+            <div class="summary-row">
+              <span>Discount</span>
+              <span id="discountValue">–</span>
+            </div>
+            <div class="summary-row total">
+              <span>Total</span>
+              <span id="totalValue">–</span>
+            </div>
+          </div>
+
+          <div class="invoice-footer">
+            <p id="invoiceNotes" class="invoice-notes"></p>
+            <button class="btn outline" id="printBtn">Print / Save as PDF</button>
+          </div>
+        </section>
+      </main>
+
+      <footer class="app-footer">
+        <span>Designed for architects & interior designers</span>
+      </footer>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
+
+
