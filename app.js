@@ -102,6 +102,7 @@ function collectFormData() {
 function calculateInvoice(data) {
   const items = [];
 
+  // Elevation is optional - only add if both area and rate are provided and > 0
   if (data.elevationArea > 0 && data.elevationRate > 0) {
     const amount = data.elevationArea * data.elevationRate;
     items.push({
@@ -114,6 +115,7 @@ function calculateInvoice(data) {
     });
   }
 
+  // Interior can be printed independently even if elevation is not filled
   if (data.interiorArea > 0 && data.interiorRate > 0) {
     const amount = data.interiorArea * data.interiorRate;
     items.push({
@@ -324,7 +326,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const calc = calculateInvoice(data);
     if (!calc.items.length) {
       alert(
-        "Please enter at least one valid rate and area (for Elevation, Interior or an extra item)."
+        "Please enter at least one valid rate and area (for Interior or an extra item). Elevation is optional."
       );
       return;
     }
