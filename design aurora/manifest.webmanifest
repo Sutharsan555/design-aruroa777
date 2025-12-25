@@ -1,0 +1,19 @@
+{
+  "name": "Design Aurora Invoice",
+  "short_name": "Aurora Invoice",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0c3d42",
+  "theme_color": "#0c3d42",
+  "icons": [
+    {
+      "src": "logo.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
+
+
+
