@@ -8,6 +8,9 @@
   <meta name="theme-color" content="#0c3d42" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="stylesheet" href="styles.css" />
+  <!-- PDF Generation Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 
 <body>
@@ -86,9 +89,10 @@
 
           <div class="grid two-cols">
             <div class="field">
-              <label for="discount">Overall discount (%)</label>
+              <label for="discount">Overall discount (%) <span id="discountPackageLabel"
+                  class="package-indicator"></span></label>
               <input id="discount" type="number" min="5" max="10" step="0.1" value="5" />
-              <p class="field-help">Standard client discount between 5% and 10%.</p>
+              <p class="field-help" id="discountHelp">Standard client discount between 5% and 10%.</p>
             </div>
           </div>
 
@@ -151,6 +155,7 @@
           <div class="invoice-meta-group">
             <p class="invoice-meta" id="invoiceDate"></p>
             <p class="invoice-meta" id="invoiceId"></p>
+            <img src="stamp.svg" alt="Company Stamp" class="company-stamp" id="companyStamp" style="display: none;" />
           </div>
         </div>
 
@@ -187,12 +192,53 @@
 
         <div class="invoice-footer">
           <p id="invoiceNotes" class="invoice-notes"></p>
-          <button class="btn outline" id="printBtn">Print / Save as PDF</button>
+          <div class="invoice-actions">
+            <button class="btn outline" id="printBtn">Print / Save as PDF</button>
+            <button class="btn primary" id="downloadPdfBtn" style="display: none;">📄 Download PDF for Client</button>
+          </div>
         </div>
 
         <div class="invoice-terms" id="invoiceTerms">
           <h4>Terms & Conditions</h4>
           <div id="invoiceRulesList"></div>
+        </div>
+      </section>
+
+      <!-- Package Banner for Client -->
+      <section class="card package-banner-card" id="packageBannerCard" style="display: none;">
+        <div class="banner-header">
+          <h2>📦 Package Summary for Client</h2>
+          <p class="banner-subtitle">Professional package presentation</p>
+        </div>
+
+        <div class="package-banner" id="packageBanner">
+          <div class="banner-top">
+            <div class="banner-logo">
+              <img src="logo.svg" alt="Design Aurora" class="banner-logo-img" />
+              <div class="banner-company">
+                <h3>Design Aurora</h3>
+                <p>Architectural Design Services</p>
+              </div>
+            </div>
+            <div class="banner-package-badge" id="bannerPackageBadge"></div>
+          </div>
+
+          <div class="banner-content">
+            <div class="banner-client-info" id="bannerClientInfo"></div>
+
+            <div class="banner-package-details" id="bannerPackageDetails"></div>
+
+            <div class="banner-pricing" id="bannerPricing"></div>
+
+            <div class="banner-features" id="bannerFeatures"></div>
+          </div>
+
+          <div class="banner-footer">
+            <p>Thank you for choosing Design Aurora</p>
+            <div class="banner-stamp-area">
+              <img src="stamp.svg" alt="Official Stamp" class="banner-stamp" />
+            </div>
+          </div>
         </div>
       </section>
     </main>

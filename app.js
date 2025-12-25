@@ -363,6 +363,190 @@ function renderInvoice(data, calc) {
   });
 
   invoiceRulesList.appendChild(generalTerms);
+
+  // Generate package banner if package is selected
+  if (data.selectedPackage) {
+    generatePackageBanner(data);
+  }
+}
+
+function generatePackageBanner(data) {
+  if (!data.selectedPackage) return;
+
+  const pkg = PACKAGES[data.selectedPackage];
+  const bannerCard = document.getElementById("packageBannerCard");
+  const bannerClientInfo = document.getElementById("bannerClientInfo");
+  const bannerPackageDetails = document.getElementById("bannerPackageDetails");
+  const bannerPricing = document.getElementById("bannerPricing");
+  const bannerFeatures = document.getElementById("bannerFeatures");
+  const bannerPackageBadge = document.getElementById("bannerPackageBadge");
+
+  // Show banner card
+  bannerCard.style.display = "block";
+
+  // Package badge
+  bannerPackageBadge.innerHTML = `<h2>${pkg.name}</h2>`;
+
+  // Client info
+  bannerClientInfo.innerHTML = `
+    <div class="banner-info-row">
+      <div class="banner-info-item">
+        <span class="banner-label">Client Name</span>
+        <span class="banner-value">${data.clientName || "–"}</span>
+      </div>
+      <div class="banner-info-item">
+        <span class="banner-label">Project Name</span>
+        <span class="banner-value">${data.projectName || "–"}</span>
+      </div>
+      <div class="banner-info-item">
+        <span class="banner-label">Date</span>
+        <span class="banner-value">${getTodayString()}</span>
+      </div>
+    </div>
+  `;
+
+  // Package details
+  bannerPackageDetails.innerHTML = `
+    <h3>Package Details</h3>
+    <div class="banner-detail-grid">
+      <div class="banner-detail-item">
+        <span class="banner-detail-label">Interior Rate</span>
+        <span class="banner-detail-value">${data.currency}${pkg.interiorRate}/sq ft</span>
+      </div>
+      ${pkg.elevationRate > 0 ? `
+        <div class="banner-detail-item">
+          <span class="banner-detail-label">Elevation Rate</span>
+          <span class="banner-detail-value">${data.currency}${pkg.elevationRate}/sq ft</span>
+        </div>
+      ` : ''}
+      <div class="banner-detail-item">
+        <span class="banner-detail-label">Site Area</span>
+        <span class="banner-detail-value">${data.siteArea.toLocaleString()} sq ft</span>
+      </div>
+      <div class="banner-detail-item">
+        <span class="banner-detail-label">Discount Range</span>
+        <span class="banner-detail-value">${pkg.discountMin}% - ${pkg.discountMax}%</span>
+      </div>
+    </div>
+  `;
+
+  // Pricing breakdown
+  const calc = calculateInvoice(data);
+  bannerPricing.innerHTML = `
+    <h3>Investment Summary</h3>
+    <div class="banner-pricing-details">
+      <div class="banner-price-row">
+        <span>Subtotal</span>
+        <span class="banner-price-value">${formatCurrency(calc.subtotal, data.currency)}</span>
+      </div>
+      <div class="banner-price-row">
+        <span>Discount (${data.discountPercent}%)</span>
+        <span class="banner-price-value">- ${formatCurrency(calc.discountAmount, data.currency)}</span>
+      </div>
+      <div class="banner-price-row banner-price-total">
+        <span>Total Investment</span>
+        <span class="banner-price-value">${formatCurrency(calc.total, data.currency)}</span>
+      </div>
+    </div>
+  `;
+
+  // Features
+  bannerFeatures.innerHTML = `
+    <h3>What's Included</h3>
+    <div class="banner-features-grid">
+      ${pkg.features.map(feature => `
+        <div class="banner-feature-item">
+          <span class="banner-feature-icon">✓</span>
+          <span>${feature}</span>
+        </div>
+      `).join('')}
+    </div>
+    <div class="banner-rules">
+      <h4>Package Terms</h4>
+      ${pkg.rules.map(rule => `<p>• ${rule}</p>`).join('')}
+    </div>
+  `;
+
+  // Show PDF download button
+  document.getElementById("downloadPdfBtn").style.display = "inline-flex";
+
+  // Show stamp on invoice
+  document.getElementById("companyStamp").style.display = "block";
+}
+
+async function downloadPackagePDF() {
+  const { jsPDF } = window.jspdf;
+
+  // Show loading state
+  const downloadBtn = document.getElementById("downloadPdfBtn");
+  const originalText = downloadBtn.textContent;
+  downloadBtn.textContent = "⏳ Generating PDF...";
+  downloadBtn.disabled = true;
+
+  try {
+    // Create new PDF
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    // Capture invoice section
+    const invoiceCard = document.querySelector('.invoice-card');
+    const invoiceCanvas = await html2canvas(invoiceCard, {
+      scale: 2,
+      backgroundColor: '#ffffff',
+      logging: false
+    });
+
+    const invoiceImgData = invoiceCanvas.toDataURL('image/png');
+    const invoiceImgWidth = pageWidth - 20;
+    const invoiceImgHeight = (invoiceCanvas.height * invoiceImgWidth) / invoiceCanvas.width;
+
+    // Add invoice to PDF
+    pdf.addImage(invoiceImgData, 'PNG', 10, 10, invoiceImgWidth, invoiceImgHeight);
+
+    // Add new page for banner if it exists
+    const bannerCard = document.getElementById("packageBannerCard");
+    if (bannerCard && bannerCard.style.display !== "none") {
+      pdf.addPage();
+
+      const bannerCanvas = await html2canvas(bannerCard, {
+        scale: 2,
+        backgroundColor: '#ffffff',
+        logging: false
+      });
+
+      const bannerImgData = bannerCanvas.toDataURL('image/png');
+      const bannerImgWidth = pageWidth - 20;
+      const bannerImgHeight = (bannerCanvas.height * bannerImgWidth) / bannerCanvas.width;
+
+      pdf.addImage(bannerImgData, 'PNG', 10, 10, bannerImgWidth, bannerImgHeight);
+    }
+
+    // Generate filename
+    const data = collectFormData();
+    const clientName = data.clientName ? data.clientName.replace(/[^a-z0-9]/gi, '_') : 'Client';
+    const packageName = data.selectedPackage ? PACKAGES[data.selectedPackage].name.replace(/[^a-z0-9]/gi, '_') : 'Package';
+    const date = new Date().toISOString().split('T')[0];
+    const filename = `DesignAurora_${packageName}_${clientName}_${date}.pdf`;
+
+    // Download PDF
+    pdf.save(filename);
+
+    // Reset button
+    downloadBtn.textContent = "✓ PDF Generated!";
+    setTimeout(() => {
+      downloadBtn.textContent = originalText;
+      downloadBtn.disabled = false;
+    }, 2000);
+
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    downloadBtn.textContent = "❌ Error - Try again";
+    setTimeout(() => {
+      downloadBtn.textContent = originalText;
+      downloadBtn.disabled = false;
+    }, 2000);
+  }
 }
 
 function addExtraItemRow() {
@@ -482,9 +666,15 @@ function confirmPackageSelection() {
   discountInput.max = pkg.discountMax;
   discountInput.value = pkg.discountMin;
 
-  const discountHelp = discountInput.nextElementSibling;
-  if (discountHelp && discountHelp.classList.contains("field-help")) {
-    discountHelp.textContent = `Package discount range: ${pkg.discountMin}% to ${pkg.discountMax}%`;
+  // Update discount label with package name
+  const discountPackageLabel = document.getElementById("discountPackageLabel");
+  if (discountPackageLabel) {
+    discountPackageLabel.textContent = `(${pkg.name})`;
+  }
+
+  const discountHelp = document.getElementById("discountHelp");
+  if (discountHelp) {
+    discountHelp.textContent = `${pkg.name} discount range: ${pkg.discountMin}% to ${pkg.discountMax}%`;
   }
 
   closePackageModal();
@@ -584,6 +774,11 @@ document.addEventListener("DOMContentLoaded", () => {
   printBtn.addEventListener("click", () => {
     window.print();
   });
+
+  const downloadPdfBtn = document.getElementById("downloadPdfBtn");
+  if (downloadPdfBtn) {
+    downloadPdfBtn.addEventListener("click", downloadPackagePDF);
+  }
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
