@@ -1,3 +1,75 @@
+// Package Definitions
+const PACKAGES = {
+  basic: {
+    name: "Basic Package",
+    interiorRate: 15,
+    elevationRate: 0,
+    discountMin: 5,
+    discountMax: 5,
+    features: [
+      "Basic interior design planning",
+      "2D floor plans",
+      "Basic material recommendations"
+    ],
+    rules: [
+      "Elevation design is not included in this package",
+      "Interior rate is fixed at ₹15 per sq ft",
+      "Standard discount of 5% applies",
+      "1 revision included",
+      "Suitable for small to medium projects"
+    ]
+  },
+  standard: {
+    name: "Standard Package",
+    interiorRate: 25,
+    elevationRate: 12,
+    discountMin: 5,
+    discountMax: 7,
+    features: [
+      "Complete interior design",
+      "3D renderings",
+      "Detailed material schedule",
+      "Elevation design (₹12/sq ft)",
+      "2 revisions included"
+    ],
+    rules: [
+      "Interior rate fixed at ₹25 per sq ft",
+      "Elevation rate fixed at ₹12 per sq ft (optional)",
+      "Discount range: 5% to 7%",
+      "2 design revisions included",
+      "Best for medium-sized residential projects"
+    ]
+  },
+  luxury: {
+    name: "Luxury Package",
+    interiorRate: 40,
+    elevationRate: 20,
+    discountMin: 5,
+    discountMax: 10,
+    features: [
+      "Premium interior design",
+      "Photorealistic 3D renders",
+      "Custom material sourcing",
+      "Premium elevation design (₹20/sq ft)",
+      "Lighting design consultation",
+      "Unlimited revisions",
+      "Dedicated project manager"
+    ],
+    rules: [
+      "Interior rate fixed at ₹40 per sq ft",
+      "Elevation rate fixed at ₹20 per sq ft (optional)",
+      "Discount range: 5% to 10%",
+      "Unlimited design revisions",
+      "Includes lighting and consultation services",
+      "Dedicated project manager assigned",
+      "Suitable for high-end luxury projects"
+    ]
+  }
+};
+
+let selectedPackage = null;
+let pendingPackageSelection = null;
+
 function formatCurrency(value, currencySymbol) {
   if (isNaN(value)) return "–";
   const formatted = value.toLocaleString(undefined, {
@@ -49,7 +121,7 @@ function collectFormData() {
   const elevationAreaRaw = document.getElementById("elevationArea").value;
   const elevationArea = elevationAreaRaw
     ? parseNumberInput(elevationAreaRaw)
-    : siteArea;
+    : 0;
   const elevationRate = parseNumberInput(
     document.getElementById("elevationRate").value
   );
@@ -96,6 +168,7 @@ function collectFormData() {
     interiorRate,
     interiorNotes,
     extraItems,
+    selectedPackage,
   };
 }
 
@@ -159,10 +232,8 @@ function renderInvoice(data, calc) {
   const totalValue = document.getElementById("totalValue");
   const invoiceNotes = document.getElementById("invoiceNotes");
 
-  invoiceProject.textContent =
-    "Project: " + (data.projectName || "–");
-  invoiceClient.textContent =
-    "Client: " + (data.clientName || "–");
+  invoiceProject.textContent = "Project: " + (data.projectName || "–");
+  invoiceClient.textContent = "Client: " + (data.clientName || "–");
   invoiceDate.textContent = "Date: " + getTodayString();
   invoiceId.textContent = generateInvoiceId();
 
@@ -189,8 +260,8 @@ function renderInvoice(data, calc) {
       areaTd.textContent =
         item.area !== "" && !isNaN(item.area)
           ? item.area.toLocaleString(undefined, {
-              maximumFractionDigits: 2,
-            })
+            maximumFractionDigits: 2,
+          })
           : "–";
       row.appendChild(areaTd);
 
@@ -219,8 +290,8 @@ function renderInvoice(data, calc) {
   );
   discountValue.textContent = calc.discountAmount
     ? `${formatCurrency(calc.discountAmount, data.currency)} (${parseNumberInput(
-        document.getElementById("discount").value
-      )}% )`
+      document.getElementById("discount").value
+    )}% )`
     : "–";
   totalValue.textContent = formatCurrency(
     calc.total,
@@ -242,6 +313,56 @@ function renderInvoice(data, calc) {
   }
 
   invoiceNotes.textContent = noteParts.join(" • ");
+
+  // Render invoice rules/terms
+  const invoiceRulesList = document.getElementById("invoiceRulesList");
+  invoiceRulesList.innerHTML = "";
+
+  if (data.selectedPackage) {
+    const pkg = PACKAGES[data.selectedPackage];
+    const rulesContainer = document.createElement("div");
+    rulesContainer.className = "terms-section";
+
+    const packageTitle = document.createElement("p");
+    packageTitle.className = "terms-title";
+    packageTitle.textContent = `${pkg.name} - Project Guidelines:`;
+    rulesContainer.appendChild(packageTitle);
+
+    pkg.rules.forEach(rule => {
+      const p = document.createElement("p");
+      p.className = "terms-item";
+      p.textContent = "• " + rule;
+      rulesContainer.appendChild(p);
+    });
+
+    invoiceRulesList.appendChild(rulesContainer);
+  }
+
+  // Add general terms
+  const generalTerms = document.createElement("div");
+  generalTerms.className = "terms-section";
+
+  const generalTitle = document.createElement("p");
+  generalTitle.className = "terms-title";
+  generalTitle.textContent = "General Terms:";
+  generalTerms.appendChild(generalTitle);
+
+  const generalRules = [
+    "Payment terms: 50% advance, 50% upon project completion",
+    "Design revisions as per package terms",
+    "Timeline may vary based on project scope and complexity",
+    "All rates are exclusive of materials and execution costs",
+    "Client approval required at each design milestone"
+  ];
+
+  generalRules.forEach(rule => {
+    const p = document.createElement("p");
+    p.className = "terms-item";
+    p.textContent = "• " + rule;
+    generalTerms.appendChild(p);
+  });
+
+  invoiceRulesList.appendChild(generalTerms);
 }
 
 function addExtraItemRow() {
@@ -293,6 +414,127 @@ function resetFormAndInvoice() {
   document.getElementById("invoiceId").textContent = "";
 }
 
+function showPackageModal(packageKey) {
+  pendingPackageSelection = packageKey;
+  const pkg = PACKAGES[packageKey];
+  const modal = document.getElementById("packageModal");
+
+  document.getElementById("modalPackageName").textContent = pkg.name;
+  document.getElementById("modalPackagePrice").textContent =
+    `Interior: ₹${pkg.interiorRate}/sq ft` +
+    (pkg.elevationRate > 0 ? ` | Elevation: ₹${pkg.elevationRate}/sq ft` : " | No elevation included");
+
+  const featuresList = document.getElementById("modalFeatures");
+  featuresList.innerHTML = "";
+  pkg.features.forEach(feature => {
+    const li = document.createElement("li");
+    li.textContent = "✓ " + feature;
+    featuresList.appendChild(li);
+  });
+
+  const rulesDiv = document.getElementById("modalRules");
+  rulesDiv.innerHTML = "";
+  pkg.rules.forEach(rule => {
+    const p = document.createElement("p");
+    p.textContent = "• " + rule;
+    rulesDiv.appendChild(p);
+  });
+
+  modal.classList.add("active");
+}
+
+function closePackageModal() {
+  const modal = document.getElementById("packageModal");
+  modal.classList.remove("active");
+  pendingPackageSelection = null;
+}
+
+function confirmPackageSelection() {
+  if (!pendingPackageSelection) return;
+
+  selectedPackage = pendingPackageSelection;
+  const pkg = PACKAGES[selectedPackage];
+
+  // Show selected package badge
+  const selectedDisplay = document.getElementById("selectedPackageDisplay");
+  const selectedName = document.getElementById("selectedPackageName");
+  selectedDisplay.style.display = "flex";
+  selectedName.textContent = pkg.name;
+
+  // Apply package rates
+  document.getElementById("interiorRate").value = pkg.interiorRate;
+  document.getElementById("interiorRate").readOnly = true;
+
+  if (pkg.elevationRate > 0) {
+    document.getElementById("elevationRate").value = pkg.elevationRate;
+    document.getElementById("elevationRate").readOnly = true;
+  } else {
+    document.getElementById("elevationArea").value = "";
+    document.getElementById("elevationArea").disabled = true;
+    document.getElementById("elevationRate").value = "";
+    document.getElementById("elevationRate").disabled = true;
+    document.getElementById("elevationNotes").disabled = true;
+  }
+
+  // Update discount range
+  const discountInput = document.getElementById("discount");
+  discountInput.min = pkg.discountMin;
+  discountInput.max = pkg.discountMax;
+  discountInput.value = pkg.discountMin;
+
+  const discountHelp = discountInput.nextElementSibling;
+  if (discountHelp && discountHelp.classList.contains("field-help")) {
+    discountHelp.textContent = `Package discount range: ${pkg.discountMin}% to ${pkg.discountMax}%`;
+  }
+
+  closePackageModal();
+
+  // Scroll to form
+  document.querySelector(".form-card").scrollIntoView({ behavior: "smooth" });
+}
+
+function handleProjectTypeChange() {
+  const projectType = document.getElementById("projectType").value;
+  const elevationHeading = document.getElementById("elevationHeading");
+  const interiorHeading = document.querySelector(".form-card h3:nth-of-type(2)");
+  const elevationSection = elevationHeading.nextElementSibling;
+  const interiorSection = interiorHeading.nextElementSibling;
+
+  // Reset all fields to enabled
+  document.getElementById("elevationArea").disabled = false;
+  document.getElementById("elevationRate").disabled = false;
+  document.getElementById("elevationNotes").disabled = false;
+  document.getElementById("interiorArea").disabled = false;
+  document.getElementById("interiorRate").disabled = false;
+  document.getElementById("interiorNotes").disabled = false;
+
+  if (projectType === "exterior") {
+    // Exterior only - hide interior section
+    if (interiorHeading) interiorHeading.style.display = "none";
+    if (interiorSection) interiorSection.style.display = "none";
+    elevationHeading.textContent = "Exterior/Elevation";
+
+    // Make interior rate 0 or clear it
+    document.getElementById("interiorArea").value = "";
+    document.getElementById("interiorRate").value = "0";
+  } else if (projectType === "interior") {
+    // Interior only - hide elevation section
+    if (elevationHeading) elevationHeading.style.display = "none";
+    if (elevationSection) elevationSection.style.display = "none";
+
+    // Clear elevation fields
+    document.getElementById("elevationArea").value = "";
+    document.getElementById("elevationRate").value = "";
+  } else {
+    // Full project - show both
+    if (elevationHeading) elevationHeading.style.display = "block";
+    if (elevationSection) elevationSection.style.display = "grid";
+    if (interiorHeading) interiorHeading.style.display = "block";
+    if (interiorSection) interiorSection.style.display = "grid";
+    elevationHeading.textContent = "Exterior/Elevation (Optional)";
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("calculator-form");
   const addItemBtn = document.getElementById("addItemBtn");
@@ -301,6 +543,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("invoiceDate").textContent =
     "Date: " + getTodayString();
+
+  // Project type change listener
+  const projectTypeSelect = document.getElementById("projectType");
+  if (projectTypeSelect) {
+    projectTypeSelect.addEventListener("change", handleProjectTypeChange);
+  }
+
+  // Package selection event listener
+  const packageSelect = document.getElementById("packageSelect");
+  if (packageSelect) {
+    packageSelect.addEventListener("change", (e) => {
+      const packageKey = e.target.value;
+      if (packageKey) {
+        showPackageModal(packageKey);
+      }
+    });
+  }
+
+  // Modal event listeners
+  document.getElementById("closeModal").addEventListener("click", closePackageModal);
+  document.getElementById("cancelPackage").addEventListener("click", closePackageModal);
+  document.getElementById("confirmPackage").addEventListener("click", confirmPackageSelection);
+
+  // Close modal on outside click
+  document.getElementById("packageModal").addEventListener("click", (e) => {
+    if (e.target.id === "packageModal") {
+      closePackageModal();
+    }
+  });
 
   addItemBtn.addEventListener("click", () => {
     addExtraItemRow();
@@ -317,6 +588,7 @@ document.addEventListener("DOMContentLoaded", () => {
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     const data = collectFormData();
+    const projectType = document.getElementById("projectType").value;
 
     if (!data.siteArea) {
       alert("Please enter the site area in sq ft.");
@@ -325,9 +597,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const calc = calculateInvoice(data);
     if (!calc.items.length) {
-      alert(
-        "Please enter at least one valid rate and area (for Interior or an extra item). Elevation is optional."
-      );
+      if (projectType === "exterior") {
+        alert("Please enter valid exterior/elevation area and rate.");
+      } else if (projectType === "interior") {
+        alert("Please enter valid interior area and rate.");
+      } else {
+        alert("Please enter at least one valid rate and area (for Interior, Exterior, or an extra item).");
+      }
       return;
     }
 
