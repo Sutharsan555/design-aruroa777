@@ -848,6 +848,25 @@ body {
   background-clip: text;
 }
 
+.banner-package-name {
+  text-align: center;
+  padding: 20px 0;
+  margin: 16px 0;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.banner-package-name h2 {
+  margin: 0;
+  font-size: 2.2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #38bdf8, #a855f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 .banner-content {
   display: flex;
   flex-direction: column;

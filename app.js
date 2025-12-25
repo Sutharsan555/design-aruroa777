@@ -380,12 +380,16 @@ function generatePackageBanner(data) {
   const bannerPricing = document.getElementById("bannerPricing");
   const bannerFeatures = document.getElementById("bannerFeatures");
   const bannerPackageBadge = document.getElementById("bannerPackageBadge");
+  const bannerPackageName = document.getElementById("bannerPackageName");
 
   // Show banner card
   bannerCard.style.display = "block";
 
   // Package badge
   bannerPackageBadge.innerHTML = `<h2>${pkg.name}</h2>`;
+
+  // Package name at top
+  bannerPackageName.innerHTML = `<h2>${pkg.name}</h2>`;
 
   // Client info
   bannerClientInfo.innerHTML = `
