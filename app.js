@@ -602,6 +602,88 @@ function resetFormAndInvoice() {
   document.getElementById("invoiceId").textContent = "";
 }
 
+async function downloadBrochurePDF() {
+  const downloadBtn = document.getElementById("downloadBrochureBtn");
+  const originalText = downloadBtn.innerHTML;
+
+  // Show loading state
+  downloadBtn.innerHTML = '<span class="icon">⏳</span> Generating Brochure...';
+  downloadBtn.disabled = true;
+
+  try {
+    // Create a hidden iframe to load brochure.html
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '1000px';
+    iframe.style.height = '1400px'; // A4-ish height
+    iframe.style.border = '0';
+    iframe.style.display = 'none'; // Keep it hidden
+    document.body.appendChild(iframe);
+
+    // Wait for brochure to load
+    await new Promise((resolve) => {
+      iframe.onload = resolve;
+      iframe.src = 'brochure.html';
+    });
+
+    const brochureDoc = iframe.contentDocument || iframe.contentWindow.document;
+    const brochureBody = brochureDoc.body;
+
+    // Use html2canvas on the brochure's body
+    const canvas = await html2canvas(brochureBody, {
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      backgroundColor: '#020617'
+    });
+
+    const imgData = canvas.toDataURL('image/png');
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    const imgWidth = pageWidth;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    // If brochure is longer than one page, add it across pages
+    let heightLeft = imgHeight;
+    let position = 0;
+
+    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+
+    while (heightLeft >= 0) {
+      position = heightLeft - imgHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+    }
+
+    pdf.save('DesignAurora_Packages_Brochure.pdf');
+
+    // Remove iframe
+    document.body.removeChild(iframe);
+
+    // Reset button
+    downloadBtn.innerHTML = '<span class="icon">✓</span> Brochure Downloaded!';
+    setTimeout(() => {
+      downloadBtn.innerHTML = originalText;
+      downloadBtn.disabled = false;
+    }, 3000);
+
+  } catch (error) {
+    console.error('Error generating brochure PDF:', error);
+    downloadBtn.innerHTML = '<span class="icon">❌</span> Error - Try again';
+    setTimeout(() => {
+      downloadBtn.innerHTML = originalText;
+      downloadBtn.disabled = false;
+    }, 3000);
+  }
+}
+
 function showPackageModal(packageKey) {
   pendingPackageSelection = packageKey;
   const pkg = PACKAGES[packageKey];

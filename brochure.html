@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design Service Packages | Design Aurora</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #38bdf8;
+            --primary-dark: #0c4a6e;
+            --secondary: #a855f7;
+            --accent: #fbbf24;
+            --bg: #020617;
+            --card-bg: #0f172a;
+            --text: #f8fafc;
+            --text-soft: #94a3b8;
+            --border: rgba(148, 163, 184, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            background: #0c3d42;
+            border-radius: 50%;
+            padding: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
+        }
+
+        .brand-title {
+            font-size: 3rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .brand-subtitle {
+            color: var(--text-soft);
+            font-size: 1.1rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .packages-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .package-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px 30px;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .package-card.featured {
+            border-color: var(--primary);
+            box-shadow: 0 20px 50px rgba(56, 189, 248, 0.15);
+            transform: scale(1.05);
+            z-index: 1;
+        }
+
+        .package-badge {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--bg);
+            padding: 5px 20px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .package-name {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .package-price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary);
+        }
+
+        .package-price span {
+            font-size: 1rem;
+            color: var(--text-soft);
+            font-weight: 400;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 5px;
+        }
+
+        .features-list,
+        .rules-list {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .features-list li,
+        .rules-list li {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .features-list li::before {
+            content: '✓';
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .rules-list li::before {
+            content: '•';
+            color: var(--text-soft);
+        }
+
+        .footer-info {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1px solid var(--border);
+        }
+
+        .contact-email {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .stamp {
+            width: 120px;
+            margin-top: 20px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 900px) {
+            .packages-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .package-card.featured {
+                transform: none;
+            }
+        }
+
+        @media print {
+            body {
+                background-color: white;
+                color: black;
+                padding: 0;
+            }
+
+            .container {
+                max-width: 100%;
+            }
+
+            .package-card {
+                background: white;
+                border: 1px solid #ddd;
+                break-inside: avoid;
+            }
+
+            .brand-title {
+                -webkit-text-fill-color: black;
+                background: none;
+            }
+
+            .package-price {
+                color: black;
+            }
+
+            .package-badge {
+                background: #eee;
+                border: 1px solid #ccc;
+            }
+
+            .logo {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <img src="logo.svg" alt="Design Aurora" class="logo">
+            <h1 class="brand-title">Design Aurora</h1>
+            <p class="brand-subtitle">Architectural & Interior Design Services</p>
+        </header>
+
+        <div class="packages-grid">
+            <!-- Basic Package -->
+            <div class="package-card">
+                <h2 class="package-name">Basic</h2>
+                <div class="package-price">₹15 <span>/sq ft</span></div>
+
+                <h3 class="section-title">What's Included</h3>
+                <ul class="features-list">
+                    <li>Basic interior design planning</li>
+                    <li>2D floor plans</li>
+                    <li>Basic material recommendations</li>
+                </ul>
+
+                <h3 class="section-title">Package Rules</h3>
+                <ul class="rules-list">
+                    <li>Elevation design is not included</li>
+                    <li>Interior rate is fixed at ₹15 per sq ft</li>
+                    <li>Standard discount of 5% applies</li>
+                    <li>1 revision included</li>
+                    <li>Suitable for small to medium projects</li>
+                </ul>
+            </div>
+
+            <!-- Standard Package -->
+            <div class="package-card featured">
+                <div class="package-badge">Most Popular</div>
+                <h2 class="package-name">Standard</h2>
+                <div class="package-price">₹25 <span>/sq ft</span></div>
+
+                <h3 class="section-title">What's Included</h3>
+                <ul class="features-list">
+                    <li>Complete interior design</li>
+                    <li>3D renderings</li>
+                    <li>Detailed material schedule</li>
+                    <li>Elevation design (₹12/sq ft)</li>
+                    <li>2 revisions included</li>
+                </ul>
+
+                <h3 class="section-title">Package Rules</h3>
+                <ul class="rules-list">
+                    <li>Interior rate fixed at ₹25 per sq ft</li>
+                    <li>Elevation rate fixed at ₹12 per sq ft (opt.)</li>
+                    <li>Discount range: 5% to 7%</li>
+                    <li>2 design revisions included</li>
+                    <li>Best for medium-sized residential projects</li>
+                </ul>
+            </div>
+
+            <!-- Luxury Package -->
+            <div class="package-card">
+                <h2 class="package-name">Luxury</h2>
+                <div class="package-price">₹40 <span>/sq ft</span></div>
+
+                <h3 class="section-title">What's Included</h3>
+                <ul class="features-list">
+                    <li>Premium interior design</li>
+                    <li>Photorealistic 3D renders</li>
+                    <li>Custom material sourcing</li>
+                    <li>Premium elevation design (₹20/sq ft)</li>
+                    <li>Lighting design consultation</li>
+                    <li>Unlimited revisions</li>
+                    <li>Dedicated project manager</li>
+                </ul>
+
+                <h3 class="section-title">Package Rules</h3>
+                <ul class="rules-list">
+                    <li>Interior rate fixed at ₹40 per sq ft</li>
+                    <li>Elevation rate fixed at ₹20 per sq ft (opt.)</li>
+                    <li>Discount range: 5% to 10%</li>
+                    <li>Unlimited design revisions</li>
+                    <li>Includes lighting and consultation services</li>
+                    <li>Dedicated project manager assigned</li>
+                    <li>Suitable for high-end luxury projects</li>
+                </ul>
+            </div>
+        </div>
+
+        <footer class="footer-info">
+            <p class="contact-email">sozhaarchitect@gmail.com</p>
+            <p>Thank you for choosing Design Aurora</p>
+            <img src="stamp.svg" alt="Official Stamp" class="stamp">
+        </footer>
+    </div>
+</body>
+
+</html>
