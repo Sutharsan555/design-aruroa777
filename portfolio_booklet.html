@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design Portfolio Booklet | Design Aurora</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-paper: #e9e5e2;
+            --page-bg: #f5f3f1;
+            --text-dark: #2c2c2c;
+            --text-muted: #7a7a7a;
+            --accent: #b4a391;
+            --border: #dcd7d2;
+            --grid-line: rgba(0, 0, 0, 0.05);
+            --page-width: 297mm;
+            --page-height: 210mm;
+            /* A4 Landscape */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-paper);
+            color: var(--text-dark);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Booklet Layout */
+        .booklet {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 0;
+            gap: 40px;
+        }
+
+        .page {
+            width: var(--page-width);
+            height: var(--page-height);
+            background-color: var(--page-bg);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 15mm;
+        }
+
+        /* Typography */
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Outfit', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .slide-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .slide-name {
+            font-size: 14px;
+            font-weight: 500;
+            font-style: italic;
+            color: var(--text-muted);
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .slide-date {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* -------------------------------------------------------------------------
+           PAGE 1: COVER
+        ------------------------------------------------------------------------- */
+        .page-cover {
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(rgba(245, 243, 241, 0.8), rgba(245, 243, 241, 0.8)), url('cover.png');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .cover-content {
+            text-align: center;
+            border: 1px solid var(--border);
+            padding: 40px 60px;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .cover-title {
+            font-size: 48px;
+            margin-bottom: 10px;
+            color: var(--text-dark);
+        }
+
+        .cover-subtitle {
+            font-size: 18px;
+            color: var(--accent);
+            letter-spacing: 0.3em;
+        }
+
+        /* -------------------------------------------------------------------------
+           PAGE 2: CONTENTS
+        ------------------------------------------------------------------------- */
+        .contents-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            margin-top: 40px;
+        }
+
+        .contents-list {
+            list-style: none;
+        }
+
+        .contents-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+
+        .contents-image {
+            width: 100%;
+            height: 300px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            object-fit: cover;
+        }
+
+        /* -------------------------------------------------------------------------
+           TECHNICAL SLIDES (Floor Plans)
+        ------------------------------------------------------------------------- */
+        .technical-layout {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 30px;
+            flex-grow: 1;
+        }
+
+        .technical-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .technical-title-vertical {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            font-size: 40px;
+            color: var(--border);
+            align-self: flex-start;
+            margin-top: auto;
+        }
+
+        .plan-container {
+            border: 1px solid var(--border);
+            background: white;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: radial-gradient(var(--grid-line) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .plan-placeholder {
+            width: 90%;
+            height: auto;
+            opacity: 0.8;
+        }
+
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px dotted var(--border);
+        }
+
+        .legend-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 10px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .legend-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 5px;
+            border: 1px solid var(--accent);
+            border-radius: 50%;
+        }
+
+        /* -------------------------------------------------------------------------
+           BOARDS (Material, Inspiration)
+        ------------------------------------------------------------------------- */
+        .board-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 15px;
+            flex-grow: 1;
+        }
+
+        .board-item {
+            background: #fff;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .board-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .board-item.span-2 {
+            grid-column: span 2;
+        }
+
+        .board-item.span-v2 {
+            grid-row: span 2;
+        }
+
+        .board-label {
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            background: rgba(255, 255, 255, 0.8);
+            font-size: 9px;
+            padding: 2px 5px;
+            text-transform: uppercase;
+        }
+
+        /* -------------------------------------------------------------------------
+           FURNITURE SELECTION
+        ------------------------------------------------------------------------- */
+        .furniture-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            flex-grow: 1;
+        }
+
+        .furniture-card {
+            border: 1px solid var(--border);
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            background: white;
+        }
+
+        .furniture-img {
+            aspect-ratio: 1;
+            background: #f9f9f9;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .furniture-name {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .furniture-spec {
+            font-size: 9px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* -------------------------------------------------------------------------
+           PRINT STYLES
+        ------------------------------------------------------------------------- */
+        @media print {
+            @page {
+                size: A4 landscape;
+                margin: 0;
+            }
+
+            body {
+                background: none;
+                padding: 0;
+            }
+
+            .booklet {
+                gap: 0;
+                padding: 0;
+            }
+
+            .page {
+                box-shadow: none;
+                margin: 0;
+                break-after: page;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .download-btn {
+                display: none !important;
+            }
+        }
+
+        /* Download Button */
+        .download-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--text-dark);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: transform 0.2s;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <button class="download-btn" onclick="window.print()">DOWNLOAD / PRINT BOOKLET</button>
+
+    <div class="booklet">
+
+        <!-- PAGE 1: COVER -->
+        <div class="page page-cover">
+            <div class="cover-content">
+                <p class="cover-subtitle">Interior Presentation</p>
+                <h1 class="cover-title">Design Aurora</h1>
+                <p style="font-size: 14px; color: var(--text-muted); margin-top: 20px;">Architecture • Interior • Design
+                </p>
+            </div>
+        </div>
+
+        <!-- PAGE 2: CONTENT -->
+        <div class="page">
+            <div class="slide-header">
+                <span class="slide-name">Content</span>
+                <span class="slide-date">30/01/26</span>
+            </div>
+            <div class="contents-container">
+                <ul class="contents-list">
+                    <li><span>01 Content</span> <span>02</span></li>
+                    <li><span>02 Overview of the Project</span> <span>03</span></li>
+                    <li><span>03 Inspiration Board</span> <span>04</span></li>
+                    <li><span>04 Floor Finishes</span> <span>05</span></li>
+                    <li><span>05 Furniture Selection - Living Room</span> <span>06</span></li>
+                    <li><span>06 Lightning Fixtures</span> <span>07</span></li>
+                    <li><span>07 Material Board</span> <span>08</span></li>
+                    <li><span>08 Lightning Plan</span> <span>09</span></li>
+                </ul>
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <img src="cover.png" class="contents-image" alt="Project Shot">
+                    <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">
+                        This portfolio presents the comprehensive design strategy for residential excellence, combining
+                        technical precision with artistic inspiration.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 3: OVERVIEW -->
+        <div class="page">
+            <div class="slide-header">
+                <span class="slide-name">Overview of the Project</span>
+                <span class="slide-date">30/01/26</span>
+            </div>
+            <div class="technical-layout">
+                <div class="technical-sidebar">
+                    <h3 style="font-size: 14px; color: var(--accent);">Project Info</h3>
+                    <div style="font-size: 12px; line-height: 2;">
+                        <p><strong>NAME:</strong> Aurora Residence</p>
+                        <p><strong>LOCATION:</strong> Chennai, India</p>
+                        <p><strong>AREA:</strong> 2450 SQ FT</p>
+                        <p><strong>STYLE:</strong> Modern Minimalist</p>
+                    </div>
+                </div>
+                <div class="plan-container">
+                    <!-- Representing a simplified floor plan block -->
+                    <div style="width: 80%; border: 2px solid var(--text-dark); aspect-ratio: 1.4; position: relative;">
+                        <div
+                            style="position: absolute; top: 0; left: 0; width: 40%; height: 60%; border-right: 1px solid var(--text-dark); border-bottom: 1px solid var(--text-dark); padding: 5px; font-size: 8px;">
+                            MASTER BEDROOM</div>
+                        <div
+                            style="position: absolute; top: 0; right: 0; width: 60%; height: 60%; border-bottom: 1px solid var(--text-dark); padding: 5px; font-size: 8px;">
+                            LIVING & DINING</div>
+                        <div
+                            style="position: absolute; bottom: 0; left: 0; width: 40%; height: 40%; border-right: 1px solid var(--text-dark); padding: 5px; font-size: 8px;">
+                            KITCHEN</div>
+                        <div
+                            style="position: absolute; bottom: 0; right: 0; width: 60%; height: 40%; padding: 5px; font-size: 8px;">
+                            BALCONY</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 4: INSPIRATION BOARD -->
+        <div class="page">
+            <div class="slide-header">
+                <span class="slide-name">Inspiration Board</span>
+                <span class="slide-date">30/01/26</span>
+            </div>
+            <div class="board-grid">
+                <div class="board-item span-2 span-v2">
+                    <div class="board-label">Main Mood</div>
+                </div>
+                <div class="board-item">
+                    <div class="board-label">Texture</div>
+                </div>
+                <div class="board-item">
+                    <div class="board-label">Lighting</div>
+                </div>
+                <div class="board-item">
+                    <div class="board-label">Finish</div>
+                </div>
+                <div class="board-item">
+                    <div class="board-label">Detail</div>
+                </div>
+            </div>
+            <p style="margin-top: 15px; font-size: 12px; color: var(--text-muted);">
+                A palette of warm neutrals, natural stone, and soft textiles to create a serene sanctuary.
+            </p>
+        </div>
+
+        <!-- PAGE 5: LIGHTNING PLAN -->
+        <div class="page">
+            <div class="slide-header">
+                <span class="slide-name">Lightning Plan</span>
+                <span class="slide-date">30/01/26</span>
+            </div>
+            <div class="technical-layout">
+                <div class="technical-sidebar">
+                    <h2 class="technical-title-vertical">LIGHTNING PLAN</h2>
+                </div>
+                <div style="display: flex; flex-direction: column;">
+                    <div class="plan-container" style="flex-grow: 1;">
+                        <!-- Lighting dots representation -->
+                        <div
+                            style="width: 80%; border: 1px solid var(--border); aspect-ratio: 1.6; position: relative; background: #fff;">
+                            <div
+                                style="position: absolute; top: 20%; left: 20%; width: 6px; height: 6px; background: var(--accent); border-radius: 50%;">
+                            </div>
+                            <div
+                                style="position: absolute; top: 20%; right: 20%; width: 6px; height: 6px; background: var(--accent); border-radius: 50%;">
+                            </div>
+                            <div
+                                style="position: absolute; bottom: 30%; left: 50%; width: 6px; height: 6px; background: var(--accent); border-radius: 50%;">
+                            </div>
+                            <div
+                                style="position: absolute; top: 40%; right: 40%; width: 6px; height: 6px; background: var(--accent); border-radius: 50%;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="legend-grid">
+                        <div class="legend-item">
+                            <div class="legend-icon" style="background: var(--accent);"></div>Recessed Light
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-icon" style="border-radius: 0;"></div>Floor Lamp
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-icon" style="border: 2px solid var(--text-dark);"></div>Pendant
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-icon" style="background: var(--text-dark);"></div>Wall Lamp
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 6: FURNITURE SELECTION -->
+        <div class="page">
+            <div class="slide-header">
+                <span class="slide-name">Furniture Selection - Living Room</span>
+                <span class="slide-date">30/01/26</span>
+            </div>
+            <div class="furniture-grid">
+                <div class="furniture-card">
+                    <div class="furniture-img">SOFA</div>
+                    <p class="furniture-name">3-Seater Nordic</p>
+                    <p class="furniture-spec">Fabric | 2200x900mm</p>
+                </div>
+                <div class="furniture-card">
+                    <div class="furniture-img">CHAIR</div>
+                    <p class="furniture-name">Accent Easy Chair</p>
+                    <p class="furniture-spec">Oak & Linen</p>
+                </div>
+                <div class="furniture-card">
+                    <div class="furniture-img">TABLE</div>
+                    <p class="furniture-name">Marble Coffee Table</p>
+                    <p class="furniture-spec">Calacatta | Ø900mm</p>
+                </div>
+                <div class="furniture-card">
+                    <div class="furniture-img">RUG</div>
+                    <p class="furniture-name">Handwoven Jute</p>
+                    <p class="furniture-spec">Sand | 3000x2000mm</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 7: MATERIAL BOARD -->
+        <div class="page">
+            <div class="slide-header">
+                <span class="slide-name">Material Board - Living Room</span>
+                <span class="slide-date">30/01/26</span>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 30px; flex-grow: 1;">
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div style="height: 100px; background: #e8e2d9; border: 1px solid var(--border);"></div>
+                    <div style="height: 100px; background: #5d5a56; border: 1px solid var(--border);"></div>
+                    <div style="flex-grow: 1; background: #fdfcfb; border: 1px solid var(--border);"></div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="board-item">
+                        <div class="board-label">Stone</div>
+                    </div>
+                    <div class="board-item">
+                        <div class="board-label">Wood</div>
+                    </div>
+                    <div class="board-item">
+                        <div class="board-label">Metal</div>
+                    </div>
+                    <div class="board-item">
+                        <div class="board-label">Veneer</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
