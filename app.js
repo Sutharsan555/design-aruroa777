@@ -604,31 +604,58 @@ function resetFormAndInvoice() {
 
 async function downloadBrochurePDF() {
   const downloadBtn = document.getElementById("downloadBrochureBtn");
+  if (!downloadBtn) return;
   const originalText = downloadBtn.innerHTML;
 
   // Show loading state
   downloadBtn.innerHTML = '<span class="icon">⏳</span> Generating Brochure...';
   downloadBtn.disabled = true;
 
+  let iframe = null;
+
   try {
     // Create a hidden iframe to load brochure.html
-    const iframe = document.createElement('iframe');
+    iframe = document.createElement('iframe');
+    // Using visibility: hidden instead of display: none to ensure it has a layout
     iframe.style.position = 'fixed';
-    iframe.style.right = '0';
-    iframe.style.bottom = '0';
+    iframe.style.left = '-9999px';
+    iframe.style.top = '0';
     iframe.style.width = '1000px';
-    iframe.style.height = '1400px'; // A4-ish height
+    iframe.style.height = '1400px';
     iframe.style.border = '0';
-    iframe.style.display = 'none'; // Keep it hidden
+    iframe.style.visibility = 'hidden';
     document.body.appendChild(iframe);
 
     // Wait for brochure to load
-    await new Promise((resolve) => {
-      iframe.onload = resolve;
+    await new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => reject(new Error("Timeout loading brochure")), 10000);
+      iframe.onload = () => {
+        clearTimeout(timeout);
+        resolve();
+      };
+      iframe.onerror = () => {
+        clearTimeout(timeout);
+        reject(new Error("Failed to load brochure.html"));
+      };
       iframe.src = 'brochure.html';
     });
 
     const brochureDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+    // Wait for images and fonts to be ready inside the iframe
+    await brochureDoc.fonts.ready;
+    const images = Array.from(brochureDoc.images);
+    await Promise.all(images.map(img => {
+      if (img.complete) return Promise.resolve();
+      return new Promise(resolve => {
+        img.onload = resolve;
+        img.onerror = resolve; // Don't block forever if image fails
+      });
+    }));
+
+    // Small extra delay to ensure rendering is stable
+    await new Promise(resolve => setTimeout(resolve, 500));
+
     const brochureBody = brochureDoc.body;
 
     // Use html2canvas on the brochure's body
@@ -636,7 +663,8 @@ async function downloadBrochurePDF() {
       scale: 2,
       useCORS: true,
       logging: false,
-      backgroundColor: '#020617'
+      backgroundColor: '#020617',
+      allowTaint: true
     });
 
     const imgData = canvas.toDataURL('image/png');
@@ -664,9 +692,6 @@ async function downloadBrochurePDF() {
 
     pdf.save('DesignAurora_Packages_Brochure.pdf');
 
-    // Remove iframe
-    document.body.removeChild(iframe);
-
     // Reset button
     downloadBtn.innerHTML = '<span class="icon">✓</span> Brochure Downloaded!';
     setTimeout(() => {
@@ -681,6 +706,11 @@ async function downloadBrochurePDF() {
       downloadBtn.innerHTML = originalText;
       downloadBtn.disabled = false;
     }, 3000);
+  } finally {
+    // Ensure iframe is removed
+    if (iframe && iframe.parentNode) {
+      document.body.removeChild(iframe);
+    }
   }
 }
 
