@@ -714,6 +714,20 @@ async function downloadBrochurePDF() {
   }
 }
 
+function printBrochure() {
+  const printWindow = window.open('brochure.html', '_blank');
+  if (printWindow) {
+    printWindow.onload = () => {
+      // Small delay to ensure styles and fonts are loaded
+      setTimeout(() => {
+        printWindow.print();
+      }, 500);
+    };
+  } else {
+    alert("Please allow pop-ups to open the brochure for printing.");
+  }
+}
+
 function showPackageModal(packageKey) {
   pendingPackageSelection = packageKey;
   const pkg = PACKAGES[packageKey];
@@ -930,6 +944,12 @@ document.addEventListener("DOMContentLoaded", () => {
     navigator.serviceWorker
       .register("service-worker.js")
       .catch((err) => console.error("SW registration failed", err));
+  }
+
+  // New Brochure Print Action
+  const printBrochureBtn = document.getElementById("printBrochureBtn");
+  if (printBrochureBtn) {
+    printBrochureBtn.addEventListener("click", printBrochure);
   }
 });
 
