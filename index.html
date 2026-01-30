@@ -28,7 +28,12 @@
     <main class="app-main">
       <!-- Package Selection -->
       <section class="card package-selection-card">
-        <h2>Choose Your Design Package</h2>
+        <div class="card-header-actions">
+          <h2>Choose Your Design Package</h2>
+          <button type="button" class="btn ghost-accent" id="downloadBrochureBtn">
+            <span class="icon">📄</span> Download Brochure (PDF)
+          </button>
+        </div>
         <p class="package-intro">Select the package that best suits your project needs.</p>
 
         <div class="package-selector">
@@ -244,6 +249,108 @@
         </div>
       </section>
     </main>
+
+    <!-- PDF Brochure Template (Hidden) -->
+    <div id="brochureTemplate" class="brochure-template" style="display: none;">
+      <div class="brochure-page">
+        <div class="brochure-header">
+          <img src="logo.svg" alt="Design Aurora" class="brochure-logo" />
+          <div class="brochure-brand">
+            <h1>Design Aurora</h1>
+            <p>Architectural & Interior Design Services</p>
+          </div>
+        </div>
+
+        <div class="brochure-title">
+          <h2>Design Service Packages</h2>
+          <p>Professional design solutions for every project scale.</p>
+        </div>
+
+        <div class="brochure-grid">
+          <!-- Basic Package -->
+          <div class="brochure-pkg-card">
+            <div class="brochure-pkg-header">
+              <h3>Basic</h3>
+              <div class="brochure-pkg-price">₹15<span>/sq ft</span></div>
+            </div>
+            <div class="brochure-pkg-body">
+              <h4>What's Included</h4>
+              <ul class="brochure-features">
+                <li>Basic interior design planning</li>
+                <li>2D floor plans</li>
+                <li>Basic material recommendations</li>
+              </ul>
+              <h4>Terms</h4>
+              <ul class="brochure-rules">
+                <li>Interior rate fixed at ₹15/sq ft</li>
+                <li>Elevation not included</li>
+                <li>5% standard discount</li>
+                <li>1 revision included</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Standard Package -->
+          <div class="brochure-pkg-card featured">
+            <div class="brochure-pkg-header">
+              <h3>Standard</h3>
+              <div class="brochure-pkg-price">₹25<span>/sq ft</span></div>
+            </div>
+            <div class="brochure-pkg-body">
+              <h4>What's Included</h4>
+              <ul class="brochure-features">
+                <li>Complete interior design</li>
+                <li>3D renderings</li>
+                <li>Detailed material schedule</li>
+                <li>Elevation design (₹12/sq ft)</li>
+                <li>2 revisions included</li>
+              </ul>
+              <h4>Terms</h4>
+              <ul class="brochure-rules">
+                <li>Interior rate fixed at ₹25/sq ft</li>
+                <li>Elevation rate: ₹12/sq ft</li>
+                <li>Discount: 5% - 7%</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Luxury Package -->
+          <div class="brochure-pkg-card">
+            <div class="brochure-pkg-header">
+              <h3>Luxury</h3>
+              <div class="brochure-pkg-price">₹40<span>/sq ft</span></div>
+            </div>
+            <div class="brochure-pkg-body">
+              <h4>What's Included</h4>
+              <ul class="brochure-features">
+                <li>Premium interior design</li>
+                <li>Photorealistic 3D renders</li>
+                <li>Custom material sourcing</li>
+                <li>Premium elevation (₹20/sq ft)</li>
+                <li>Lighting consultation</li>
+                <li>Unlimited revisions</li>
+              </ul>
+              <h4>Terms</h4>
+              <ul class="brochure-rules">
+                <li>Interior rate fixed at ₹40/sq ft</li>
+                <li>Elevation rate: ₹20/sq ft</li>
+                <li>Discount: 5% - 10%</li>
+                <li>Dedicated project manager</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="brochure-footer">
+          <div class="brochure-contact">
+            <p>Contact us: sozhaarchitect@gmail.com</p>
+          </div>
+          <div class="brochure-stamp-area">
+            <img src="stamp.svg" alt="Official Stamp" class="brochure-stamp" />
+          </div>
+        </div>
+      </div>
+    </div>
 
     <footer class="app-footer">
       <span>Designed for architects & interior designers</span>

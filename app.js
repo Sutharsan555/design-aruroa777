@@ -784,6 +784,11 @@ document.addEventListener("DOMContentLoaded", () => {
     downloadPdfBtn.addEventListener("click", downloadPackagePDF);
   }
 
+  const downloadBrochureBtn = document.getElementById("downloadBrochureBtn");
+  if (downloadBrochureBtn) {
+    downloadBrochureBtn.addEventListener("click", downloadBrochurePDF);
+  }
+
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     const data = collectFormData();
