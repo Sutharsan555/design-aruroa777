@@ -634,6 +634,24 @@ body {
   transform: translateY(-1px);
 }
 
+.btn.premium-btn {
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  border: 1px solid #b4a391;
+  color: #b4a391;
+  padding: 8px 18px;
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+.btn.premium-btn:hover {
+  background: #b4a391;
+  color: #0f172a;
+  box-shadow: 0 10px 30px rgba(180, 163, 145, 0.3);
+  transform: translateY(-2px);
+}
+
 .btn.outline {
   border-color: rgba(148, 163, 184, 0.6);
   background: rgba(15, 23, 42, 0.9);
@@ -1255,6 +1273,209 @@ body {
   opacity: 0.7;
 }
 
+/* Drafting Section Styles */
+.drafting-card {
+  border-color: var(--accent);
+  margin-top: 18px;
+}
+
+.drafting-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.drafting-item {
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.drafting-item:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  transform: translateY(-2px);
+}
+
+.drafting-label {
+  font-size: 0.75rem;
+  color: var(--text-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+.drafting-price {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.drafting-price span {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--text-soft);
+}
+
+/* Drafting PDF Template Styles (Hidden) */
+.drafting-template {
+  position: fixed;
+  left: -9999px;
+  top: 0;
+}
+
+.drafting-pdf-page {
+  width: 210mm;
+  min-height: 297mm;
+  padding: 20mm;
+  background: #ffffff;
+  color: #0f172a;
+  box-sizing: border-box;
+  font-family: system-ui, sans-serif;
+  position: relative;
+}
+
+.drafting-pdf-content {
+  margin-top: 50px;
+}
+
+.drafting-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 30px;
+}
+
+.drafting-table th,
+.drafting-table td {
+  padding: 15px;
+  border: 1px solid #e2e8f0;
+  text-align: left;
+}
+
+.drafting-table th {
+  background: #f8fafc;
+  color: #475569;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.drafting-table td {
+  font-size: 1rem;
+}
+
+.drafting-footer-note {
+  margin-top: 40px;
+  font-size: 0.9rem;
+  color: #64748b;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+/* Drafting Calculator Styles */
+.drafting-calculator {
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  margin: 15px 0 20px;
+}
+
+.drafting-total-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 18px;
+  padding-top: 15px;
+  border-top: 1px dashed var(--border-subtle);
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.drafting-total {
+  display: flex;
+  flex-direction: column;
+}
+
+.drafting-total .label {
+  font-size: 0.75rem;
+  color: var(--text-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.drafting-total .amount {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.quote-header-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  font-size: 0.9rem;
+  color: #64748b;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 15px;
+}
+
+.quote-header-info p {
+  margin: 0;
+}
+
+/* PDF Template Helper Styles */
+.drafting-table .numeric {
+  text-align: right;
+}
+
+.brochure-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #0f172a;
+  padding-bottom: 20px;
+}
+
+.brochure-logo {
+  width: 60px;
+  height: auto;
+}
+
+.brochure-brand h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #0f172a;
+}
+
+.brochure-brand p {
+  margin: 2px 0 0;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.brochure-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.brochure-stamp {
+  width: 70px;
+  height: auto;
+  opacity: 0.8;
+}
+
 @media print {
   body {
     background: #ffffff;
@@ -1287,9 +1508,10 @@ body {
     page-break-after: always;
   }
 
-  .package-banner-card {
-    page-break-before: always;
-    display: block !important;
+  .package-banner-card,
+  .drafting-card,
+  .package-selection-card {
+    display: none !important;
   }
 
   .package-banner {
@@ -1328,4 +1550,161 @@ body {
     content: "";
     display: none;
   }
+}
+
+/* Premium 2D Quote Styles */
+.premium-quote {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+}
+
+.quote-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-30deg);
+  font-size: 8rem;
+  font-weight: 900;
+  color: rgba(15, 23, 42, 0.03);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.premium-quote .brochure-header {
+  border-bottom: 2px solid #0f172a;
+  margin-bottom: 40px;
+  position: relative;
+  z-index: 1;
+}
+
+.premium-quote .drafting-pdf-content {
+  position: relative;
+  z-index: 1;
+}
+
+.quote-header-info {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.quote-id-box,
+.quote-date-box {
+  flex: 1;
+  padding: 15px;
+  background: #f8fafc;
+  border-left: 4px solid #0f172a;
+  border-radius: 4px;
+}
+
+.quote-header-info .label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  margin: 0 0 4px;
+}
+
+.quote-header-info .value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.quote-detail-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-top: 4px solid #38bdf8;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.05);
+  margin-top: 20px;
+}
+
+.quote-service-info h3 {
+  font-size: 1.5rem;
+  color: #0f172a;
+  margin: 0 0 10px;
+}
+
+.quote-service-info p {
+  font-size: 1rem;
+  color: #475569;
+  margin: 0 0 30px;
+  line-height: 1.6;
+}
+
+.quote-pricing-grid {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding-top: 30px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.pricing-node {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pricing-node .node-label {
+  font-size: 0.85rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pricing-node .node-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.pricing-node .node-value small {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #94a3b8;
+}
+
+.pricing-node.result .node-value {
+  font-size: 2rem;
+  color: #38bdf8;
+}
+
+/* Individual Download Buttons in Drafting Grid */
+.drafting-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn-icon-sm {
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 8px;
+  color: var(--accent);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-icon-sm:hover {
+  background: var(--accent);
+  color: #0b1120;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.4);
+}
+
+.btn-icon-sm .icon {
+  font-size: 1rem;
 }

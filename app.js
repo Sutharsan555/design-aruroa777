@@ -67,6 +67,12 @@ const PACKAGES = {
   }
 };
 
+const DRAFTING_RATES = {
+  basic: { rate: 3.5, label: "Basic 2D Layouts", desc: "Simple, dimensioned furniture layouts and spatial planning." },
+  architectural: { rate: 7.5, label: "Architectural Drafting", desc: "Construction-ready drawings, structural markers and dimensions." },
+  highend: { rate: 27.5, label: "High-End Drafting", desc: "Intricate architectural details and premium documentation." }
+};
+
 let selectedPackage = null;
 let pendingPackageSelection = null;
 
@@ -90,6 +96,10 @@ function generateInvoiceId() {
     String(now.getHours()).padStart(2, "0") +
     String(now.getMinutes()).padStart(2, "0")
   );
+}
+
+function generateQuoteId() {
+  return generateInvoiceId().replace("INV", "QTE");
 }
 
 function getTodayString() {
@@ -130,9 +140,7 @@ function collectFormData() {
     .value.trim();
 
   const interiorAreaRaw = document.getElementById("interiorArea").value;
-  const interiorArea = interiorAreaRaw
-    ? parseNumberInput(interiorAreaRaw)
-    : siteArea;
+  const interiorArea = parseNumberInput(interiorAreaRaw);
   const interiorRate = parseNumberInput(
     document.getElementById("interiorRate").value
   );
@@ -169,6 +177,10 @@ function collectFormData() {
     interiorNotes,
     extraItems,
     selectedPackage,
+    draftingArea: parseNumberInput(document.getElementById("formDraftingArea").value) || siteArea,
+    draftingService: document.getElementById("formDraftingService").value,
+    draftingCustomRate: parseNumberInput(document.getElementById("formCustomDraftingRate").value),
+    draftingNotes: document.getElementById("formDraftingNotes").value.trim(),
   };
 }
 
@@ -213,9 +225,36 @@ function calculateInvoice(data) {
     });
   });
 
+  // Add 2D Drafting Service if selected in main form
+  if (data.draftingService || data.draftingCustomRate > 0) {
+    let rate = data.draftingCustomRate;
+    let label = "2D Drafting";
+
+    if (data.draftingService && DRAFTING_RATES[data.draftingService]) {
+      label = DRAFTING_RATES[data.draftingService].label;
+      if (rate <= 0) rate = DRAFTING_RATES[data.draftingService].rate;
+    }
+
+    if (rate > 0) {
+      items.push({
+        description: label + (data.draftingNotes ? " – " + data.draftingNotes : ""),
+        area: data.draftingArea,
+        rate: rate,
+        amount: data.draftingArea * rate,
+        isDrafting: true
+      });
+    }
+  }
+
   const subtotal = items.reduce((sum, item) => sum + item.amount, 0);
+
+  // Calculate discount only on items that are NOT 2D drafting
+  const discountableSubtotal = items
+    .filter(item => !item.isDrafting)
+    .reduce((sum, item) => sum + item.amount, 0);
+
   const discountAmount =
-    subtotal * (isNaN(data.discountPercent) ? 0 : data.discountPercent / 100);
+    discountableSubtotal * (isNaN(data.discountPercent) ? 0 : data.discountPercent / 100);
   const total = subtotal - discountAmount;
 
   return { items, subtotal, discountAmount, total };
@@ -654,43 +693,32 @@ async function downloadBrochurePDF() {
     }));
 
     // Small extra delay to ensure rendering is stable
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 800));
 
-    const brochureBody = brochureDoc.body;
-
-    // Use html2canvas on the brochure's body
-    const canvas = await html2canvas(brochureBody, {
-      scale: 2,
-      useCORS: true,
-      logging: false,
-      backgroundColor: '#020617',
-      allowTaint: true
-    });
-
-    const imgData = canvas.toDataURL('image/png');
+    const pages = Array.from(brochureDoc.querySelectorAll('.page'));
     const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF('p', 'mm', 'a4');
+
+    // Create landscape PDF
+    const pdf = new jsPDF('l', 'mm', 'a4');
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
 
-    const imgWidth = pageWidth;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    for (let i = 0; i < pages.length; i++) {
+      if (i > 0) pdf.addPage();
 
-    // If brochure is longer than one page, add it across pages
-    let heightLeft = imgHeight;
-    let position = 0;
+      const canvas = await html2canvas(pages[i], {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#020617',
+        allowTaint: true
+      });
 
-    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
-
-    while (heightLeft >= 0) {
-      position = heightLeft - imgHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
+      const imgData = canvas.toDataURL('image/png');
+      pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight);
     }
 
-    pdf.save('DesignAurora_Packages_Brochure.pdf');
+    pdf.save('DesignAurora_Premium_Brochure.pdf');
 
     // Reset button
     downloadBtn.innerHTML = '<span class="icon">✓</span> Brochure Downloaded!';
@@ -915,6 +943,47 @@ document.addEventListener("DOMContentLoaded", () => {
     downloadBrochureBtn.addEventListener("click", downloadBrochurePDF);
   }
 
+  const viewPortfolioBtn = document.getElementById("viewPortfolioBtn");
+  if (viewPortfolioBtn) {
+    viewPortfolioBtn.addEventListener("click", () => {
+      window.open('portfolio_booklet.html', '_blank');
+    });
+  }
+
+
+  const draftingAreaInput = document.getElementById("draftingArea");
+  const draftingServiceSelect = document.getElementById("draftingService");
+  const customDraftingRateInput = document.getElementById("customDraftingRate");
+  const printDraftingQuoteBtn = document.getElementById("printDraftingQuoteBtn");
+
+  if (draftingAreaInput && draftingServiceSelect && customDraftingRateInput) {
+    draftingAreaInput.addEventListener("input", updateDraftingCalculation);
+    draftingServiceSelect.addEventListener("change", () => {
+      const level = draftingServiceSelect.value;
+      if (level !== "0" && DRAFTING_RATES[level]) {
+        customDraftingRateInput.value = DRAFTING_RATES[level].rate;
+      }
+      updateDraftingCalculation();
+    });
+    customDraftingRateInput.addEventListener("input", updateDraftingCalculation);
+  }
+
+  // Form level autofill
+  const formDraftingServiceSelect = document.getElementById("formDraftingService");
+  const formCustomDraftingRateInput = document.getElementById("formCustomDraftingRate");
+  if (formDraftingServiceSelect && formCustomDraftingRateInput) {
+    formDraftingServiceSelect.addEventListener("change", () => {
+      const level = formDraftingServiceSelect.value;
+      if (level && DRAFTING_RATES[level]) {
+        formCustomDraftingRateInput.value = DRAFTING_RATES[level].rate;
+      }
+    });
+  }
+
+  if (printDraftingQuoteBtn) {
+    printDraftingQuoteBtn.addEventListener("click", downloadDraftingQuotePDF);
+  }
+
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     const data = collectFormData();
@@ -954,3 +1023,262 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
+function updateDraftingCalculation() {
+  const area = parseFloat(document.getElementById("draftingArea").value) || 0;
+  const rate = parseFloat(document.getElementById("customDraftingRate").value) || 0;
+  const totalDisplay = document.getElementById("draftingTotal");
+
+  if (area <= 0 || rate <= 0) {
+    totalDisplay.textContent = "₹ 0.00";
+    return;
+  }
+
+  const total = area * rate;
+  totalDisplay.textContent = `₹ ${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
+async function downloadDraftingQuotePDF() {
+  const area = parseFloat(document.getElementById("draftingArea").value) || 0;
+  const rate = parseFloat(document.getElementById("customDraftingRate").value) || 0;
+  const level = document.getElementById("draftingService").value;
+
+  if (area <= 0 || rate <= 0) {
+    alert("Please enter area and a valid price per sq ft first.");
+    return;
+  }
+
+  const draftingBtn = document.getElementById("printDraftingQuoteBtn");
+  const originalText = draftingBtn.innerHTML;
+
+  // Visual feedback
+  draftingBtn.innerHTML = '<span class="icon">⏳</span> Finalizing...';
+  draftingBtn.disabled = true;
+
+  try {
+    if (typeof window.jspdf === 'undefined' || typeof html2canvas === 'undefined') {
+      throw new Error("Required libraries (jsPDF or html2canvas) not loaded.");
+    }
+
+    const { jsPDF } = window.jspdf;
+
+    // Determine labels
+    let label = "Custom 2D Drafting";
+    let desc = "Professional architectural documentation at a custom rate.";
+    if (level !== "0" && DRAFTING_RATES[level]) {
+      label = DRAFTING_RATES[level].label;
+      desc = DRAFTING_RATES[level].desc;
+    }
+
+    // Create a temporary container for robust rendering
+    const tempDiv = document.createElement('div');
+    tempDiv.className = 'drafting-template';
+    tempDiv.style.position = 'fixed';
+    tempDiv.style.left = '-9999px';
+    tempDiv.style.top = '0';
+    tempDiv.style.display = 'block';
+
+    const quoteId = generateQuoteId();
+    const quoteDate = getTodayString();
+    const total = area * rate;
+
+    tempDiv.innerHTML = `
+      <div class="drafting-pdf-page premium-quote" style="width: 210mm; padding: 20mm; background: #ffffff;">
+        <div class="brochure-header">
+          <img src="logo.svg" alt="Design Aurora" class="brochure-logo" />
+          <div class="brochure-brand">
+            <h1>Design Aurora</h1>
+            <p>Standalone Drafting Quote</p>
+          </div>
+        </div>
+
+        <div class="drafting-pdf-content">
+          <div class="quote-header-info">
+            <div class="quote-id-box">
+              <p class="label">Quote ID</p>
+              <p class="value">${quoteId}</p>
+            </div>
+            <div class="quote-date-box">
+              <p class="label">Date</p>
+              <p class="value">${quoteDate}</p>
+            </div>
+          </div>
+
+          <div class="quote-main-section" style="margin-top: 30px;">
+            <h2 class="section-title">Estimation Details</h2>
+            <div class="quote-detail-card" style="border-top: 4px solid #38bdf8; background: #f8fafc; padding: 25px; border-radius: 12px; border-left: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;">
+              <div class="quote-service-info">
+                <h3 style="color: #0f172a; margin-bottom: 5px; font-family: sans-serif;">${label}</h3>
+                <p style="color: #64748b; font-size: 0.9rem; font-family: sans-serif;">${desc}</p>
+              </div>
+              <div class="quote-pricing-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 25px; padding-top: 20px; border-top: 1px dashed rgba(15, 23, 42, 0.1);">
+                <div class="pricing-node">
+                  <span style="display: block; color: #64748b; font-size: 0.8rem; text-transform: uppercase;">Total Area</span>
+                  <span style="display: block; font-size: 1.25rem; font-weight: 700; color: #0f172a;">${area.toLocaleString()} <small style="font-size: 0.8rem; font-weight: 400;">sq ft</small></span>
+                </div>
+                <div class="pricing-node result">
+                  <span style="display: block; color: #38bdf8; font-size: 0.8rem; text-transform: uppercase;">Total Amount</span>
+                  <span style="display: block; font-size: 1.5rem; font-weight: 800; color: #0f172a;">₹ ${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="drafting-footer-note" style="margin-top: 60px;">
+            <p style="font-weight: 700; color: #0f172a; font-family: sans-serif;">Terms & Conditions:</p>
+            <ul style="font-size: 0.85rem; padding-left: 20px; color: #475569; line-height: 1.6; font-family: sans-serif;">
+              <li>This is a preliminary estimate and may vary based on site requirements.</li>
+              <li>Estimated delivery time: 3-5 working days per 1000 sq ft.</li>
+              <li>Valid for 30 days from the date of issue.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="brochure-footer" style="padding: 20px 0; border-top: 1px solid rgba(15, 23, 42, 0.1); margin-top: 100px; display: flex; justify-content: space-between; align-items: center;">
+          <div class="brochure-contact">
+            <p style="color: #64748b; font-size: 0.85rem; font-family: sans-serif;">www.designaurora.com | sozhaarchitect@gmail.com</p>
+          </div>
+          <div class="brochure-stamp-area">
+            <img src="stamp.svg" alt="Official Stamp" style="width: 70px; opacity: 0.8;" />
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(tempDiv);
+
+    // Wait for images to load
+    const images = Array.from(tempDiv.querySelectorAll('img'));
+    await Promise.all(images.map(img => {
+      if (img.complete) return Promise.resolve();
+      return new Promise(resolve => {
+        img.onload = resolve;
+        img.onerror = resolve;
+      });
+    }));
+
+    // Ensure styles are applied before capture
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    const canvas = await html2canvas(tempDiv.querySelector('.premium-quote'), {
+      scale: 2, // Reducing scale slightly for better compatibility
+      useCORS: true,
+      allowTaint: true, // Added for file:// protocol support
+      backgroundColor: '#ffffff',
+      logging: false
+    });
+
+    document.body.removeChild(tempDiv);
+
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = (canvas.height * pageWidth) / canvas.width;
+
+    pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight);
+    pdf.save(`DesignAurora_DraftingQuote_${quoteId}.pdf`);
+
+    draftingBtn.innerHTML = '<span class="icon">✓</span> Printed!';
+  } catch (error) {
+    console.error('Error generating quote PDF:', error);
+    draftingBtn.innerHTML = '<span class="icon">❌</span> Error';
+    // If tempDiv exists, remove it
+    const existingTemp = document.querySelector('.drafting-template[style*="-9999px"]');
+    if (existingTemp) existingTemp.remove();
+  } finally {
+    setTimeout(() => {
+      draftingBtn.innerHTML = originalText;
+      draftingBtn.disabled = false;
+    }, 2000);
+  }
+}
+
+async function downloadLevelBrochurePDF(level) {
+  const { jsPDF } = window.jspdf;
+  const draftingData = DRAFTING_RATES[level];
+
+  // Use a temporary container for individual level brochure
+  const tempDiv = document.createElement('div');
+  tempDiv.className = 'drafting-template';
+  tempDiv.style.display = 'block';
+  tempDiv.style.position = 'fixed';
+  tempDiv.style.left = '-9999px';
+
+  tempDiv.innerHTML = `
+    <div class="drafting-pdf-page premium-quote" style="width: 210mm; min-height: 297mm; padding: 20mm; background: #ffffff;">
+      <div class="brochure-header">
+        <img src="logo.svg" alt="Design Aurora" class="brochure-logo" />
+        <div class="brochure-brand">
+          <h1>Design Aurora</h1>
+          <p>Architectural Service Brochure</p>
+        </div>
+      </div>
+
+      <div class="drafting-pdf-content">
+        <div class="quote-main-section">
+          <h2 class="section-title">Drafting Service Level: ${draftingData.label}</h2>
+          <div class="quote-detail-card" style="border-top-color: #38bdf8;">
+            <div class="quote-service-info">
+              <h3>Service Overview</h3>
+              <p>${draftingData.desc}</p>
+              <p>Professional architectural drafting tailored to your specific project needs. Our ${draftingData.label} service ensures high-quality documentation for effective construction planning.</p>
+            </div>
+            <div class="quote-pricing-grid">
+              <div class="pricing-node">
+                <span class="node-label">Turnaround</span>
+                <span class="node-value">3-5 <small>Days</small></span>
+              </div>
+            </div>
+          </div>
+          
+          <div style="margin-top: 40px;">
+            <h3 style="color: #0f172a; border-bottom: 2px solid #38bdf8; display: inline-block; padding-bottom: 5px;">Key Inclusions</h3>
+            <ul style="margin-top: 15px; color: #475569; line-height: 1.8;">
+              <li>High-resolution 2D floor plans</li>
+              <li>Precise architectural dimensions</li>
+              <li>Material and spatial planning</li>
+              <li>Furniture layout integration</li>
+              <li>PDF & Source file delivery</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="drafting-footer-note" style="margin-top: 60px;">
+          <p><strong>Note:</strong> Pricing may vary slightly depending on the total area and project complexity.</p>
+        </div>
+      </div>
+
+      <div class="brochure-footer" style="padding: 20px 0; border-top: 1px solid rgba(15, 23, 42, 0.1); margin-top: 80px; display: flex; justify-content: space-between; align-items: center;">
+        <div class="brochure-contact">
+          <p>www.designaurora.com | sozhaarchitect@gmail.com</p>
+        </div>
+        <div class="brochure-stamp-area">
+          <img src="stamp.svg" alt="Official Stamp" style="width: 70px; opacity: 0.8;" />
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(tempDiv);
+
+  try {
+    const canvas = await html2canvas(tempDiv.querySelector('.premium-quote'), {
+      scale: 3,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      logging: false
+    });
+
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = (canvas.height * pageWidth) / canvas.width;
+
+    pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight);
+    pdf.save(`DesignAurora_${draftingData.label.replace(/\s+/g, '_')}_Brochure.pdf`);
+
+  } catch (error) {
+    console.error('Error generating level PDF:', error);
+  } finally {
+    document.body.removeChild(tempDiv);
+  }
+}

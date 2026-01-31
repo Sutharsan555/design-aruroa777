@@ -332,6 +332,126 @@
             width: 20px;
             height: 20px;
         }
+
+        /* New Portfolio Pages Styles */
+        .portfolio-page {
+            padding: 60px;
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            flex-grow: 1;
+        }
+
+        .portfolio-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .portfolio-title {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .portfolio-title::before {
+            content: '';
+            width: 8px;
+            height: 24px;
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        .mood-board {
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            overflow: hidden;
+            height: 300px;
+            background: rgba(148, 163, 184, 0.05);
+            position: relative;
+        }
+
+        .mood-board img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .material-swatches {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .swatch {
+            height: 80px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .swatch-label {
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            font-size: 0.65rem;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: white;
+        }
+
+        .furniture-display {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .furniture-img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .furniture-info h4 {
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .furniture-info p {
+            font-size: 0.85rem;
+            color: var(--text-soft);
+        }
+
+        .technical-highlight {
+            border-left: 2px solid var(--secondary);
+            padding-left: 20px;
+            margin-top: 10px;
+        }
+
+        .technical-highlight h4 {
+            color: var(--secondary);
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .technical-highlight p {
+            font-size: 0.85rem;
+        }
     </style>
 </head>
 
@@ -438,6 +558,141 @@
                 <p style="color: var(--text-soft); font-size: 0.8rem;">www.designaurora.com (Coming Soon)</p>
             </div>
             <div>
+                <img src="stamp.svg" alt="Official Stamp" class="stamp">
+            </div>
+        </footer>
+    </div>
+
+    <!-- Page 3: Design Concept -->
+    <div class="page portfolio-page">
+        <header class="content-header">
+            <div>
+                <h2>Design Concept</h2>
+                <p style="color: var(--text-soft);">Inspiration & Material Strategy</p>
+            </div>
+            <div class="brand-small">
+                <h3>Design Aurora</h3>
+                <p style="font-size: 0.8rem; color: var(--text-soft);">Visual Identity</p>
+            </div>
+        </header>
+
+        <div class="portfolio-grid">
+            <div class="portfolio-section">
+                <h3 class="portfolio-title">Inspiration Board</h3>
+                <div class="mood-board">
+                    <img src="inspiration_mood.png" alt="Inspiration Mood">
+                </div>
+                <p style="font-size: 0.9rem; color: var(--text-soft);">
+                    Our "Aurora Modern" concept focuses on warm neutrals, organic textures, and strategic lighting to
+                    create spaces that feel both luxurious and intimate.
+                </p>
+            </div>
+
+            <div class="portfolio-section">
+                <h3 class="portfolio-title">Material Palette</h3>
+                <div class="material-swatches">
+                    <div class="swatch" style="background-image: url('linen.png'); background-size: cover;">
+                        <span class="swatch-label">Natural Linen</span>
+                    </div>
+                    <div class="swatch" style="background: #e2e8f0;">
+                        <span class="swatch-label">Polished Stone</span>
+                    </div>
+                    <div class="swatch" style="background: #475569;">
+                        <span class="swatch-label">Charcoal Oak</span>
+                    </div>
+                    <div class="swatch" style="background: #94a3b8;">
+                        <span class="swatch-label">Brushed Metal</span>
+                    </div>
+                    <div class="swatch" style="background: #cbd5e1;">
+                        <span class="swatch-label">Soft Textiles</span>
+                    </div>
+                    <div class="swatch" style="background: #1e293b;">
+                        <span class="swatch-label">Accent Veneer</span>
+                    </div>
+                </div>
+                <div class="technical-highlight">
+                    <h4>Material Excellence</h4>
+                    <p>We source only premium, sustainable materials that ensure longevity and timeless aesthetic appeal
+                        for Every Project.</p>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer-info">
+            <div class="contact-details">
+                <p style="color: var(--text-soft); font-size: 0.8rem;">© 2024 Design Aurora • Confidential Portfolio
+                    Content</p>
+            </div>
+            <div>
+                <img src="stamp.svg" alt="Official Stamp" class="stamp">
+            </div>
+        </footer>
+    </div>
+
+    <!-- Page 4: Premium Portfolio -->
+    <div class="page portfolio-page">
+        <header class="content-header">
+            <div>
+                <h2>Premium Highlights</h2>
+                <p style="color: var(--text-soft);">Signature Furniture & Technical Precision</p>
+            </div>
+            <div class="brand-small">
+                <h3>Design Aurora</h3>
+                <p style="font-size: 0.8rem; color: var(--text-soft);">Project Showcase</p>
+            </div>
+        </header>
+
+        <div class="portfolio-grid">
+            <div class="portfolio-section">
+                <h3 class="portfolio-title">Signature Selections</h3>
+                <div class="furniture-display">
+                    <img src="sofa.png" alt="Signature Sofa" class="furniture-img">
+                    <div class="furniture-info">
+                        <h4>3-Seater Nordic Series</h4>
+                        <p>Custom upholstery in performance linen. Ergonomic design meets minimalist form.</p>
+                    </div>
+                </div>
+                <div class="furniture-display">
+                    <div class="furniture-img"
+                        style="display: flex; align-items: center; justify-content: center; background: #1e293b; color: var(--primary);">
+                        <span style="font-size: 2rem;">💡</span>
+                    </div>
+                    <div class="furniture-info">
+                        <h4>Lighting Systems</h4>
+                        <p>Layered lighting approach including recessed, ambient, and accent fixtures for perfect mood
+                            control.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="portfolio-section">
+                <h3 class="portfolio-title">Technical Expertise</h3>
+                <div class="technical-highlight">
+                    <h4>Space Optimization</h4>
+                    <p>Every square foot is meticulously planned to maximize functionality without compromising on the
+                        open-space feel.</p>
+                </div>
+                <div class="technical-highlight" style="border-color: var(--accent);">
+                    <h4 style="color: var(--accent);">Precision Drafting</h4>
+                    <p>Detailed 2D plans and 3D renderings ensure what you see is exactly what you get at the
+                        construction site.</p>
+                </div>
+
+                <div
+                    style="margin-top: 10px; border-radius: 15px; border: 1px dashed var(--border); padding: 20px; text-align: center;">
+                    <p style="font-style: italic; font-size: 0.9rem;">"Architecture is the learned game, correct and
+                        magnificent, of forms assembled in the light."</p>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer-info">
+            <div class="contact-details">
+                <p>Website: <span class="contact-email">www.designaurora.com</span></p>
+                <p style="color: var(--text-soft); font-size: 0.8rem;">Architecture • Interior • Landscape</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <img src="logo.svg" alt="Design Aurora" style="width: 40px;">
                 <img src="stamp.svg" alt="Official Stamp" class="stamp">
             </div>
         </footer>

@@ -33,6 +33,9 @@
           <button type="button" class="btn ghost-accent" id="downloadBrochureBtn">
             <span class="icon">📄</span> Download (PDF)
           </button>
+          <button type="button" class="btn premium-btn" id="viewPortfolioBtn">
+            <span class="icon">🎨</span> Portfolio Presentation
+          </button>
           <button type="button" class="btn primary" id="printBrochureBtn">
             <span class="icon">🖨️</span> Print Brochure
           </button>
@@ -48,6 +51,44 @@
               <option value="standard">Standard Package (₹25/sq ft)</option>
               <option value="luxury">Luxury Package (₹40/sq ft)</option>
             </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2D Plan Only / Drafting Section -->
+      <section class="card drafting-card">
+        <div class="card-header-actions">
+          <h2>2D Planning & Drafting Services</h2>
+        </div>
+        <div class="drafting-calculator">
+          <div class="grid three-cols">
+            <div class="field">
+              <label for="draftingArea">Area (sq ft)</label>
+              <input type="number" id="draftingArea" placeholder="Enter area..." min="0">
+            </div>
+            <div class="field">
+              <label for="draftingService">Preset Level (Optional)</label>
+              <select id="draftingService">
+                <option value="0">-- Select for autofill --</option>
+                <option value="basic">Basic 2D (₹3.5)</option>
+                <option value="architectural">Architectural (₹7.5)</option>
+                <option value="highend">High-End (₹27.5)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="customDraftingRate">Price / sq ft (₹)</label>
+              <input type="number" id="customDraftingRate" placeholder="Enter price..." min="0" step="0.1">
+            </div>
+          </div>
+
+          <div class="drafting-total-row">
+            <div class="drafting-total">
+              <span class="label">Estimated Total:</span>
+              <span class="amount" id="draftingTotal">₹ 0.00</span>
+            </div>
+            <button type="button" class="btn primary" id="printDraftingQuoteBtn">
+              <span class="icon">🖨️</span> Print 2D Quote
+            </button>
           </div>
         </div>
       </section>
@@ -104,40 +145,78 @@
             </div>
           </div>
 
-          <h3 id="elevationHeading">Exterior/Elevation (Optional)</h3>
-          <div class="grid three-cols">
-            <div class="field">
-              <label for="elevationArea">Elevation area (sq ft)</label>
-              <input id="elevationArea" type="number" min="0" step="0.01"
-                placeholder="Optional - leave empty if not needed" />
-              <p class="field-help">Optional field. Leave empty if not applicable.</p>
+          <div id="designSections">
+            <h3 id="elevationHeading">Exterior/Elevation (Optional)</h3>
+            <div class="grid three-cols">
+              <div class="field">
+                <label for="elevationArea">Elevation area (sq ft)</label>
+                <input id="elevationArea" type="number" min="0" step="0.01"
+                  placeholder="Optional - leave empty if not needed" />
+                <p class="field-help">Optional field. Leave empty if not applicable.</p>
+              </div>
+              <div class="field">
+                <label for="elevationRate">Elevation rate (per sq ft)</label>
+                <input id="elevationRate" type="number" min="0" step="0.01" placeholder="Optional" />
+                <p class="field-help">Optional field. Leave empty if not applicable.</p>
+              </div>
+              <div class="field">
+                <label for="elevationNotes">Elevation notes (optional)</label>
+                <input id="elevationNotes" type="text" placeholder="e.g. 3D front elevation" />
+                <p class="field-help">Optional field. Leave empty if not applicable.</p>
+              </div>
             </div>
-            <div class="field">
-              <label for="elevationRate">Elevation rate (per sq ft)</label>
-              <input id="elevationRate" type="number" min="0" step="0.01" placeholder="Optional" />
-            </div>
-            <div class="field">
-              <label for="elevationNotes">Elevation notes (optional)</label>
-              <input id="elevationNotes" type="text" placeholder="e.g. 3D front elevation" />
+
+            <h3>Interior</h3>
+            <div class="grid three-cols">
+              <div class="field">
+                <label for="interiorArea">Interior area (sq ft)</label>
+                <input id="interiorArea" type="number" min="0" step="0.01" placeholder="e.g. 1500" />
+                <p class="field-help">Optional field. Leave empty if not applicable.</p>
+              </div>
+              <div class="field">
+                <label for="interiorRate">Interior rate (per sq ft)</label>
+                <input id="interiorRate" type="number" min="0" step="0.01" placeholder="e.g. 25" />
+                <p class="field-help">Optional field. Leave empty if not applicable.</p>
+              </div>
+              <div class="field">
+                <label for="interiorNotes">Interior notes (optional)</label>
+                <input id="interiorNotes" type="text" placeholder="e.g. Full 3D interior design" />
+                <p class="field-help">Optional field. Leave empty if not applicable.</p>
+              </div>
             </div>
           </div>
 
-          <h3>Interior</h3>
+          <h3 id="draftingHeading">2D Drafting Service (Optional)</h3>
           <div class="grid three-cols">
             <div class="field">
-              <label for="interiorArea">Interior area (sq ft)</label>
-              <input id="interiorArea" type="number" min="0" step="0.01" placeholder="Leave empty to use site area" />
-              <p class="field-help">If empty, site area will be used.</p>
+              <label for="formDraftingArea">Drafting area (sq ft)</label>
+              <input id="formDraftingArea" type="number" min="0" step="0.01" placeholder="e.g. 1500" />
+              <p class="field-help">Optional field. Leave empty if not applicable.</p>
             </div>
             <div class="field">
-              <label for="interiorRate">Interior rate (per sq ft)</label>
-              <input id="interiorRate" type="number" min="0" step="0.01" value="20" />
+              <label for="formDraftingService">Preset Level (Optional)</label>
+              <select id="formDraftingService">
+                <option value="">-- No Drafting --</option>
+                <option value="basic">Basic 2D (₹3.5)</option>
+                <option value="architectural">Architectural (₹7.5)</option>
+                <option value="highend">High-End (₹27.5)</option>
+              </select>
+              <p class="field-help">Optional field. Leave empty if not applicable.</p>
             </div>
             <div class="field">
-              <label for="interiorNotes">Interior notes (optional)</label>
-              <input id="interiorNotes" type="text" placeholder="e.g. Modular kitchen, wardrobes" />
+              <label for="formCustomDraftingRate">Price / sq ft (₹)</label>
+              <input id="formCustomDraftingRate" type="number" min="0" step="0.1" placeholder="Enter price..." />
+              <p class="field-help">Optional field. Leave empty if not applicable.</p>
             </div>
           </div>
+          <div class="grid one-col">
+            <div class="field">
+              <label for="formDraftingNotes">Drafting notes (optional)</label>
+              <input id="formDraftingNotes" type="text" placeholder="e.g. Detailed furniture layout" />
+              <p class="field-help">Optional field. Leave empty if not applicable.</p>
+            </div>
+          </div>
+
 
           <h3>Additional items (optional)</h3>
           <div id="extra-items" class="extra-items"></div>
@@ -353,43 +432,186 @@
           </div>
         </div>
       </div>
-    </div>
+      <!-- Drafting Rates Template (Hidden) -->
+      <div id="draftingTemplate" class="drafting-template" style="display: none;">
+        <div class="drafting-pdf-page premium-quote">
+          <div class="quote-watermark">STANDALONE RATES</div>
+          <div class="brochure-header">
+            <img src="logo.svg" alt="Design Aurora" class="brochure-logo" />
+            <div class="brochure-brand">
+              <h1>Design Aurora</h1>
+              <p>Architectural & Interior Drafting Service Rates</p>
+            </div>
+          </div>
 
-    <footer class="app-footer">
-      <span>Designed for architects & interior designers</span>
-    </footer>
-  </div>
+          <div class="drafting-pdf-content">
+            <h2 class="section-title">Standalone Service Tiers</h2>
+            <div class="drafting-rates-grid" style="display: grid; gap: 20px; margin-top: 30px;">
+              <div class="quote-detail-card" style="border-top-color: #94a3b8;">
+                <div class="quote-service-info">
+                  <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <h3>Basic 2D Layouts</h3>
+                    <span style="font-size: 1.5rem; font-weight: 700; color: #0f172a;">₹2 – ₹5 <small
+                        style="font-size: 0.8rem; font-weight: 400; color: #64748b;">/sq ft</small></span>
+                  </div>
+                  <p>Simple, dimensioned furniture layouts and spatial planning. Ideal for initial conceptualization and
+                    furniture arrangement.</p>
+                </div>
+              </div>
 
-  <!-- Package Confirmation Modal -->
-  <div id="packageModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Confirm Package Selection</h2>
-        <button type="button" class="modal-close" id="closeModal">&times;</button>
-      </div>
-      <div class="modal-body">
-        <div class="modal-package-name" id="modalPackageName"></div>
-        <div class="modal-package-price" id="modalPackagePrice"></div>
+              <div class="quote-detail-card" style="border-top-color: #38bdf8;">
+                <div class="quote-service-info">
+                  <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <h3>Architectural Drafting</h3>
+                    <span style="font-size: 1.5rem; font-weight: 700; color: #38bdf8;">₹5 – ₹10 <small
+                        style="font-size: 0.8rem; font-weight: 400; color: #64748b;">/sq ft</small></span>
+                  </div>
+                  <p>Construction-ready drawings, including structural markers and detailed dimensions. Necessary for
+                    on-site execution and structural planning.</p>
+                </div>
+              </div>
 
-        <h3>What's Included</h3>
-        <ul class="modal-features" id="modalFeatures"></ul>
+              <div class="quote-detail-card" style="border-top-color: #a855f7;">
+                <div class="quote-service-info">
+                  <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <h3>High-End Drafting</h3>
+                    <span style="font-size: 1.5rem; font-weight: 700; color: #a855f7;">₹25 – ₹30 <small
+                        style="font-size: 0.8rem; font-weight: 400; color: #64748b;">/sq ft</small></span>
+                  </div>
+                  <p>Complex architectural details, intricate site conditions, and premium documentation. Suitable for
+                    luxury projects with complex design elements.</p>
+                </div>
+              </div>
+            </div>
 
-        <h3>Package Rules</h3>
-        <div class="modal-rules" id="modalRules"></div>
+            <div class="drafting-footer-note" style="margin-top: 60px;">
+              <p><strong>General Information:</strong></p>
+              <ul style="font-size: 0.85rem; padding-left: 20px; color: #475569;">
+                <li>Final pricing depends on project complexity and specific site requirements.</li>
+                <li>Turnaround time varies based on project square footage.</li>
+                <li>Rates exclude GST and other statutory taxes where applicable.</li>
+              </ul>
+            </div>
+          </div>
 
-        <div class="modal-alert">
-          <strong>Please note:</strong> By confirming this package, the rates will be preset according to the package
-          tier. You can still customize other project details.
+          <div class="brochure-footer"
+            style="padding: 20px 0; border-top: 1px solid rgba(15, 23, 42, 0.1); margin-top: 40px;">
+            <div class="brochure-contact">
+              <p>Contact us: sozhaarchitect@gmail.com | www.designaurora.com</p>
+            </div>
+            <div class="brochure-stamp-area">
+              <img src="stamp.svg" alt="Official Stamp" class="brochure-stamp" />
+            </div>
+          </div>
         </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn secondary" id="cancelPackage">Cancel</button>
-        <button type="button" class="btn primary" id="confirmPackage">Confirm & Continue</button>
+
+      <footer class="app-footer">
+        <span>Designed for architects & interior designers</span>
+      </footer>
+    </div>
+
+    <!-- Package Confirmation Modal -->
+    <div id="packageModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Confirm Package Selection</h2>
+          <button type="button" class="modal-close" id="closeModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-package-name" id="modalPackageName"></div>
+          <div class="modal-package-price" id="modalPackagePrice"></div>
+
+          <h3>What's Included</h3>
+          <ul class="modal-features" id="modalFeatures"></ul>
+
+          <h3>Package Rules</h3>
+          <div class="modal-rules" id="modalRules"></div>
+
+          <div class="modal-alert">
+            <strong>Please note:</strong> By confirming this package, the rates will be preset according to the package
+            tier. You can still customize other project details.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn secondary" id="cancelPackage">Cancel</button>
+          <button type="button" class="btn primary" id="confirmPackage">Confirm & Continue</button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <script src="app.js"></script>
+    <!-- 2D Quote Template (Hidden) -->
+    <div id="draftingQuoteTemplate" class="drafting-template" style="display: none;">
+      <div class="drafting-pdf-page premium-quote">
+        <div class="quote-watermark">DESIGN AURORA</div>
+        <div class="brochure-header">
+          <img src="logo.svg" alt="Design Aurora" class="brochure-logo" />
+          <div class="brochure-brand">
+            <h1>Design Aurora</h1>
+            <p>Standalone Drafting Quote</p>
+          </div>
+        </div>
+
+        <div class="drafting-pdf-content">
+          <div class="quote-header-info">
+            <div class="quote-id-box">
+              <p class="label">Quote ID</p>
+              <p class="value" id="quoteId"></p>
+            </div>
+            <div class="quote-date-box">
+              <p class="label">Date</p>
+              <p class="value" id="quoteDate"></p>
+            </div>
+          </div>
+
+          <div class="quote-main-section">
+            <h2 class="section-title">Estimation Details</h2>
+            <div class="quote-detail-card">
+              <div class="quote-service-info">
+                <h3 id="quoteServiceLevel"></h3>
+                <p id="quoteServiceDesc"></p>
+              </div>
+              <div class="quote-pricing-grid">
+                <div class="pricing-node">
+                  <span class="node-label">Total Area</span>
+                  <span class="node-value"><span id="quoteArea"></span> <small>sq ft</small></span>
+                </div>
+                <div class="pricing-node">
+                  <span class="node-label">Average Rate</span>
+                  <span class="node-value" id="quoteRate"></span>
+                </div>
+                <div class="pricing-node result">
+                  <span class="node-label">Total Amount</span>
+                  <span class="node-value" id="quoteTotal"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="drafting-footer-note" style="margin-top: 60px;">
+            <p><strong>Terms & Conditions:</strong></p>
+            <ul style="font-size: 0.85rem; padding-left: 20px; color: #475569;">
+              <li>This is a preliminary estimate and may vary based on site requirements.</li>
+              <li>Final drafting will commence upon receipt of structural data.</li>
+              <li>Estimated delivery time: 3-5 working days per 1000 sq ft.</li>
+              <li>Valid for 30 days from the date of issue.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="brochure-footer"
+          style="padding: 20px 0; border-top: 1px solid rgba(15, 23, 42, 0.1); margin-top: 80px;">
+          <div class="brochure-contact">
+            <p>www.designaurora.com | sozhaarchitect@gmail.com</p>
+          </div>
+          <div class="brochure-stamp-area">
+            <img src="stamp.svg" alt="Official Stamp" class="brochure-stamp" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
 </body>
 
 </html>

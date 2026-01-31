@@ -16,7 +16,8 @@
             --text-muted: #7a7a7a;
             --accent: #b4a391;
             --border: #dcd7d2;
-            --grid-line: rgba(0, 0, 0, 0.05);
+            --grid-line: rgba(0, 0, 0, 0.15);
+            /* Darker for better visibility */
             --page-width: 297mm;
             --page-height: 210mm;
             /* A4 Landscape */
@@ -95,7 +96,7 @@
         .page-cover {
             justify-content: center;
             align-items: center;
-            background: linear-gradient(rgba(245, 243, 241, 0.8), rgba(245, 243, 241, 0.8)), url('cover.png');
+            background: linear-gradient(rgba(245, 243, 241, 0.4), rgba(245, 243, 241, 0.4)), url('hero.png');
             background-size: cover;
             background-position: center;
         }
@@ -164,6 +165,8 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
+            padding-right: 20px;
+            border-right: 1px solid var(--border);
         }
 
         .technical-title-vertical {
@@ -182,8 +185,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-image: radial-gradient(var(--grid-line) 1px, transparent 1px);
-            background-size: 20px 20px;
+            background-image: radial-gradient(var(--grid-line) 1.5px, transparent 1.5px);
+            background-size: 30px 30px;
         }
 
         .plan-placeholder {
@@ -388,7 +391,7 @@
                     <li><span>08 Lightning Plan</span> <span>09</span></li>
                 </ul>
                 <div style="display: flex; flex-direction: column; gap: 20px;">
-                    <img src="cover.png" class="contents-image" alt="Project Shot">
+                    <img src="hero.png" class="contents-image" alt="Project Shot">
                     <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">
                         This portfolio presents the comprehensive design strategy for residential excellence, combining
                         technical precision with artistic inspiration.
@@ -441,6 +444,7 @@
             </div>
             <div class="board-grid">
                 <div class="board-item span-2 span-v2">
+                    <img src="inspiration_mood.png" alt="Main Mood">
                     <div class="board-label">Main Mood</div>
                 </div>
                 <div class="board-item">
@@ -516,7 +520,9 @@
             </div>
             <div class="furniture-grid">
                 <div class="furniture-card">
-                    <div class="furniture-img">SOFA</div>
+                    <div class="furniture-img">
+                        <img src="sofa.png" alt="Sofa" style="width: 100%; height: 100%; object-fit: contain;">
+                    </div>
                     <p class="furniture-name">3-Seater Nordic</p>
                     <p class="furniture-spec">Fabric | 2200x900mm</p>
                 </div>
@@ -546,9 +552,14 @@
             </div>
             <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 30px; flex-grow: 1;">
                 <div style="display: flex; flex-direction: column; gap: 15px;">
-                    <div style="height: 100px; background: #e8e2d9; border: 1px solid var(--border);"></div>
+                    <div style="height: 100px; background: #e8e2d9; border: 1px solid var(--border); overflow: hidden;">
+                        <img src="linen.png" alt="Linen" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
                     <div style="height: 100px; background: #5d5a56; border: 1px solid var(--border);"></div>
-                    <div style="flex-grow: 1; background: #fdfcfb; border: 1px solid var(--border);"></div>
+                    <div style="flex-grow: 1; background: #fdfcfb; border: 1px solid var(--border); overflow: hidden;">
+                        <img src="inspiration_mood.png" alt="Texture"
+                            style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div class="board-item">
