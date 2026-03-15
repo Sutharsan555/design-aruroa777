@@ -1,10 +1,30 @@
-<svg width="500" height="500" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Design Aurora logo">
-  <title>Design Aurora logo</title>
-  <circle cx="250" cy="250" r="250" fill="#0c3d42" />
-  <text x="250" y="225" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="170" fill="#d8c0a0" font-weight="600">DA</text>
-  <text x="250" y="325" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="60" fill="#d8c0a0" font-style="italic">Design Aurora</text>
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sozha Design and Build Logo">
+  <defs>
+    <linearGradient id="gold" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#A67B27" />
+      <stop offset="30%" stop-color="#FDF3BE" />
+      <stop offset="50%" stop-color="#C59B3B" />
+      <stop offset="70%" stop-color="#FFF8D6" />
+      <stop offset="100%" stop-color="#8F6317" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="-2" dy="6" stdDeviation="5" flood-color="#000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Geometric Symbol (SZ Monogram) -->
+  <g transform="translate(10, -50)">
+    <!-- A Peak / Triangle -->
+    <path d="M 170 240 L 250 110 L 320 220" fill="none" stroke="url(#gold)" stroke-width="35" stroke-linejoin="bevel" stroke-linecap="square" filter="url(#shadow)" />
+    
+    <!-- Z structure -->
+    <path d="M 210 220 L 335 220 L 210 320 L 340 320" fill="none" stroke="url(#gold)" stroke-width="35" stroke-linejoin="bevel" stroke-linecap="square" filter="url(#shadow)" />
+
+    <!-- S curve -->
+    <path d="M 230 160 C 130 110, 80 230, 160 250 C 240 270, 200 370, 100 310" fill="none" stroke="url(#gold)" stroke-width="35" stroke-linecap="round" stroke-linejoin="round" filter="url(#shadow)" />
+  </g>
+
+  <!-- Text Branding -->
+  <text x="245" y="405" text-anchor="middle" font-family="'Montserrat', 'Arial Black', sans-serif" font-weight="900" font-size="75" fill="url(#gold)" filter="url(#shadow)">SOZHA</text>
+  <text x="245" y="445" text-anchor="middle" font-family="'Montserrat', 'Arial', sans-serif" font-weight="700" font-size="20" letter-spacing="4" fill="url(#gold)" filter="url(#shadow)">DESIGN AND BUILD</text>
 </svg>
-
-
-
-

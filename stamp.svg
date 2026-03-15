@@ -17,7 +17,7 @@
   <path id="upperArc" d="M 30,100 A 70,70 0 0,1 170,100" fill="none"/>
   <text font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="url(#stampGradient)">
     <textPath href="#upperArc" startOffset="50%" text-anchor="middle">
-      DESIGN AURORA
+      SOZHA Design and Build
     </textPath>
   </text>
   

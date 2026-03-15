@@ -13,7 +13,7 @@ const PACKAGES = {
     ],
     rules: [
       "Elevation design is not included in this package",
-      "Interior rate is fixed at ₹15 per sq ft",
+      "Interior rate is fixed at â‚¹15 per sq ft",
       "Standard discount of 5% applies",
       "1 revision included",
       "Suitable for small to medium projects"
@@ -29,12 +29,12 @@ const PACKAGES = {
       "Complete interior design",
       "3D renderings",
       "Detailed material schedule",
-      "Elevation design (₹12/sq ft)",
+      "Elevation design (â‚¹12/sq ft)",
       "2 revisions included"
     ],
     rules: [
-      "Interior rate fixed at ₹25 per sq ft",
-      "Elevation rate fixed at ₹12 per sq ft (optional)",
+      "Interior rate fixed at â‚¹25 per sq ft",
+      "Elevation rate fixed at â‚¹12 per sq ft (optional)",
       "Discount range: 5% to 7%",
       "2 design revisions included",
       "Best for medium-sized residential projects"
@@ -50,14 +50,14 @@ const PACKAGES = {
       "Premium interior design",
       "Photorealistic 3D renders",
       "Custom material sourcing",
-      "Premium elevation design (₹20/sq ft)",
+      "Premium elevation design (â‚¹20/sq ft)",
       "Lighting design consultation",
       "Unlimited revisions",
       "Dedicated project manager"
     ],
     rules: [
-      "Interior rate fixed at ₹40 per sq ft",
-      "Elevation rate fixed at ₹20 per sq ft (optional)",
+      "Interior rate fixed at â‚¹40 per sq ft",
+      "Elevation rate fixed at â‚¹20 per sq ft (optional)",
       "Discount range: 5% to 10%",
       "Unlimited design revisions",
       "Includes lighting and consultation services",
@@ -77,7 +77,7 @@ let selectedPackage = null;
 let pendingPackageSelection = null;
 
 function formatCurrency(value, currencySymbol) {
-  if (isNaN(value)) return "–";
+  if (isNaN(value)) return "â€“";
   const formatted = value.toLocaleString(undefined, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -120,7 +120,7 @@ function parseNumberInput(input) {
 function collectFormData() {
   const clientName = document.getElementById("clientName").value.trim();
   const projectName = document.getElementById("projectName").value.trim();
-  const currency = document.getElementById("currency").value || "₹";
+  const currency = document.getElementById("currency").value || "â‚¹";
   const siteArea = parseNumberInput(
     document.getElementById("siteArea").value
   );
@@ -193,7 +193,7 @@ function calculateInvoice(data) {
     items.push({
       description:
         "Elevation Design" +
-        (data.elevationNotes ? " – " + data.elevationNotes : ""),
+        (data.elevationNotes ? " â€“ " + data.elevationNotes : ""),
       area: data.elevationArea,
       rate: data.elevationRate,
       amount,
@@ -206,7 +206,7 @@ function calculateInvoice(data) {
     items.push({
       description:
         "Interior Design" +
-        (data.interiorNotes ? " – " + data.interiorNotes : ""),
+        (data.interiorNotes ? " â€“ " + data.interiorNotes : ""),
       area: data.interiorArea,
       rate: data.interiorRate,
       amount,
@@ -237,7 +237,7 @@ function calculateInvoice(data) {
 
     if (rate > 0) {
       items.push({
-        description: label + (data.draftingNotes ? " – " + data.draftingNotes : ""),
+        description: label + (data.draftingNotes ? " â€“ " + data.draftingNotes : ""),
         area: data.draftingArea,
         rate: rate,
         amount: data.draftingArea * rate,
@@ -271,8 +271,8 @@ function renderInvoice(data, calc) {
   const totalValue = document.getElementById("totalValue");
   const invoiceNotes = document.getElementById("invoiceNotes");
 
-  invoiceProject.textContent = "Project: " + (data.projectName || "–");
-  invoiceClient.textContent = "Client: " + (data.clientName || "–");
+  invoiceProject.textContent = "Project: " + (data.projectName || "â€“");
+  invoiceClient.textContent = "Client: " + (data.clientName || "â€“");
   invoiceDate.textContent = "Date: " + getTodayString();
   invoiceId.textContent = generateInvoiceId();
 
@@ -301,14 +301,14 @@ function renderInvoice(data, calc) {
           ? item.area.toLocaleString(undefined, {
             maximumFractionDigits: 2,
           })
-          : "–";
+          : "â€“";
       row.appendChild(areaTd);
 
       const rateTd = document.createElement("td");
       rateTd.className = "numeric";
       rateTd.textContent = item.rate
         ? formatCurrency(item.rate, data.currency)
-        : "–";
+        : "â€“";
       row.appendChild(rateTd);
 
       const amountTd = document.createElement("td");
@@ -331,7 +331,7 @@ function renderInvoice(data, calc) {
     ? `${formatCurrency(calc.discountAmount, data.currency)} (${parseNumberInput(
       document.getElementById("discount").value
     )}% )`
-    : "–";
+    : "â€“";
   totalValue.textContent = formatCurrency(
     calc.total,
     data.currency
@@ -351,7 +351,7 @@ function renderInvoice(data, calc) {
     );
   }
 
-  invoiceNotes.textContent = noteParts.join(" • ");
+  invoiceNotes.textContent = noteParts.join(" â€¢ ");
 
   // Render invoice rules/terms
   const invoiceRulesList = document.getElementById("invoiceRulesList");
@@ -370,7 +370,7 @@ function renderInvoice(data, calc) {
     pkg.rules.forEach(rule => {
       const p = document.createElement("p");
       p.className = "terms-item";
-      p.textContent = "• " + rule;
+      p.textContent = "â€¢ " + rule;
       rulesContainer.appendChild(p);
     });
 
@@ -397,7 +397,7 @@ function renderInvoice(data, calc) {
   generalRules.forEach(rule => {
     const p = document.createElement("p");
     p.className = "terms-item";
-    p.textContent = "• " + rule;
+    p.textContent = "â€¢ " + rule;
     generalTerms.appendChild(p);
   });
 
@@ -435,11 +435,11 @@ function generatePackageBanner(data) {
     <div class="banner-info-row">
       <div class="banner-info-item">
         <span class="banner-label">Client Name</span>
-        <span class="banner-value">${data.clientName || "–"}</span>
+        <span class="banner-value">${data.clientName || "â€“"}</span>
       </div>
       <div class="banner-info-item">
         <span class="banner-label">Project Name</span>
-        <span class="banner-value">${data.projectName || "–"}</span>
+        <span class="banner-value">${data.projectName || "â€“"}</span>
       </div>
       <div class="banner-info-item">
         <span class="banner-label">Date</span>
@@ -499,14 +499,14 @@ function generatePackageBanner(data) {
     <div class="banner-features-grid">
       ${pkg.features.map(feature => `
         <div class="banner-feature-item">
-          <span class="banner-feature-icon">✓</span>
+          <span class="banner-feature-icon">âœ“</span>
           <span>${feature}</span>
         </div>
       `).join('')}
     </div>
     <div class="banner-rules">
       <h4>Package Terms</h4>
-      ${pkg.rules.map(rule => `<p>• ${rule}</p>`).join('')}
+      ${pkg.rules.map(rule => `<p>â€¢ ${rule}</p>`).join('')}
     </div>
   `;
 
@@ -523,7 +523,7 @@ async function downloadPackagePDF() {
   // Show loading state
   const downloadBtn = document.getElementById("downloadPdfBtn");
   const originalText = downloadBtn.textContent;
-  downloadBtn.textContent = "⏳ Generating PDF...";
+  downloadBtn.textContent = "â³ Generating PDF...";
   downloadBtn.disabled = true;
 
   try {
@@ -576,7 +576,7 @@ async function downloadPackagePDF() {
     pdf.save(filename);
 
     // Reset button
-    downloadBtn.textContent = "✓ PDF Generated!";
+    downloadBtn.textContent = "âœ“ PDF Generated!";
     setTimeout(() => {
       downloadBtn.textContent = originalText;
       downloadBtn.disabled = false;
@@ -584,7 +584,7 @@ async function downloadPackagePDF() {
 
   } catch (error) {
     console.error('Error generating PDF:', error);
-    downloadBtn.textContent = "❌ Error - Try again";
+    downloadBtn.textContent = "âŒ Error - Try again";
     setTimeout(() => {
       downloadBtn.textContent = originalText;
       downloadBtn.disabled = false;
@@ -610,7 +610,7 @@ function addExtraItemRow() {
       <input type="number" class="extra-rate" min="0" step="0.01" placeholder="e.g. 5000" />
     </div>
     <button type="button" class="remove-item-btn" aria-label="Remove item">
-      ✕
+      âœ•
     </button>
   `;
 
@@ -628,14 +628,14 @@ function resetFormAndInvoice() {
   document.getElementById("extra-items").innerHTML = "";
   document.getElementById("invoiceBody").innerHTML = `
     <tr class="placeholder-row">
-      <td colspan="4">Fill in project details and click “Calculate & Generate Invoice”.</td>
+      <td colspan="4">Fill in project details and click â€œCalculate & Generate Invoiceâ€.</td>
     </tr>
   `;
-  document.getElementById("subtotalValue").textContent = "–";
-  document.getElementById("discountValue").textContent = "–";
-  document.getElementById("totalValue").textContent = "–";
-  document.getElementById("invoiceProject").textContent = "Project: –";
-  document.getElementById("invoiceClient").textContent = "Client: –";
+  document.getElementById("subtotalValue").textContent = "â€“";
+  document.getElementById("discountValue").textContent = "â€“";
+  document.getElementById("totalValue").textContent = "â€“";
+  document.getElementById("invoiceProject").textContent = "Project: â€“";
+  document.getElementById("invoiceClient").textContent = "Client: â€“";
   document.getElementById("invoiceNotes").textContent = "";
   document.getElementById("invoiceDate").textContent = "";
   document.getElementById("invoiceId").textContent = "";
@@ -647,7 +647,7 @@ async function downloadBrochurePDF() {
   const originalText = downloadBtn.innerHTML;
 
   // Show loading state
-  downloadBtn.innerHTML = '<span class="icon">⏳</span> Generating Brochure...';
+  downloadBtn.innerHTML = '<span class="icon">â³</span> Generating Brochure...';
   downloadBtn.disabled = true;
 
   let iframe = null;
@@ -721,7 +721,7 @@ async function downloadBrochurePDF() {
     pdf.save('DesignAurora_Premium_Brochure.pdf');
 
     // Reset button
-    downloadBtn.innerHTML = '<span class="icon">✓</span> Brochure Downloaded!';
+    downloadBtn.innerHTML = '<span class="icon">âœ“</span> Brochure Downloaded!';
     setTimeout(() => {
       downloadBtn.innerHTML = originalText;
       downloadBtn.disabled = false;
@@ -729,7 +729,7 @@ async function downloadBrochurePDF() {
 
   } catch (error) {
     console.error('Error generating brochure PDF:', error);
-    downloadBtn.innerHTML = '<span class="icon">❌</span> Error - Try again';
+    downloadBtn.innerHTML = '<span class="icon">âŒ</span> Error - Try again';
     setTimeout(() => {
       downloadBtn.innerHTML = originalText;
       downloadBtn.disabled = false;
@@ -763,14 +763,14 @@ function showPackageModal(packageKey) {
 
   document.getElementById("modalPackageName").textContent = pkg.name;
   document.getElementById("modalPackagePrice").textContent =
-    `Interior: ₹${pkg.interiorRate}/sq ft` +
-    (pkg.elevationRate > 0 ? ` | Elevation: ₹${pkg.elevationRate}/sq ft` : " | No elevation included");
+    `Interior: â‚¹${pkg.interiorRate}/sq ft` +
+    (pkg.elevationRate > 0 ? ` | Elevation: â‚¹${pkg.elevationRate}/sq ft` : " | No elevation included");
 
   const featuresList = document.getElementById("modalFeatures");
   featuresList.innerHTML = "";
   pkg.features.forEach(feature => {
     const li = document.createElement("li");
-    li.textContent = "✓ " + feature;
+    li.textContent = "âœ“ " + feature;
     featuresList.appendChild(li);
   });
 
@@ -778,7 +778,7 @@ function showPackageModal(packageKey) {
   rulesDiv.innerHTML = "";
   pkg.rules.forEach(rule => {
     const p = document.createElement("p");
-    p.textContent = "• " + rule;
+    p.textContent = "â€¢ " + rule;
     rulesDiv.appendChild(p);
   });
 
@@ -1029,12 +1029,12 @@ function updateDraftingCalculation() {
   const totalDisplay = document.getElementById("draftingTotal");
 
   if (area <= 0 || rate <= 0) {
-    totalDisplay.textContent = "₹ 0.00";
+    totalDisplay.textContent = "â‚¹ 0.00";
     return;
   }
 
   const total = area * rate;
-  totalDisplay.textContent = `₹ ${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  totalDisplay.textContent = `â‚¹ ${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 async function downloadDraftingQuotePDF() {
@@ -1051,7 +1051,7 @@ async function downloadDraftingQuotePDF() {
   const originalText = draftingBtn.innerHTML;
 
   // Visual feedback
-  draftingBtn.innerHTML = '<span class="icon">⏳</span> Finalizing...';
+  draftingBtn.innerHTML = '<span class="icon">â³</span> Finalizing...';
   draftingBtn.disabled = true;
 
   try {
@@ -1084,9 +1084,9 @@ async function downloadDraftingQuotePDF() {
     tempDiv.innerHTML = `
       <div class="drafting-pdf-page premium-quote" style="width: 210mm; padding: 20mm; background: #ffffff;">
         <div class="brochure-header">
-          <img src="logo.svg" alt="Design Aurora" class="brochure-logo" />
+          <img src="logo.jpeg" alt="SOZHA Design and Build" class="brochure-logo" />
           <div class="brochure-brand">
-            <h1>Design Aurora</h1>
+            <h1>SOZHA Design and Build</h1>
             <p>Standalone Drafting Quote</p>
           </div>
         </div>
@@ -1117,7 +1117,7 @@ async function downloadDraftingQuotePDF() {
                 </div>
                 <div class="pricing-node result">
                   <span style="display: block; color: #38bdf8; font-size: 0.8rem; text-transform: uppercase;">Total Amount</span>
-                  <span style="display: block; font-size: 1.5rem; font-weight: 800; color: #0f172a;">₹ ${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                  <span style="display: block; font-size: 1.5rem; font-weight: 800; color: #0f172a;">â‚¹ ${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                 </div>
               </div>
             </div>
@@ -1177,10 +1177,10 @@ async function downloadDraftingQuotePDF() {
     pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight);
     pdf.save(`DesignAurora_DraftingQuote_${quoteId}.pdf`);
 
-    draftingBtn.innerHTML = '<span class="icon">✓</span> Printed!';
+    draftingBtn.innerHTML = '<span class="icon">âœ“</span> Printed!';
   } catch (error) {
     console.error('Error generating quote PDF:', error);
-    draftingBtn.innerHTML = '<span class="icon">❌</span> Error';
+    draftingBtn.innerHTML = '<span class="icon">âŒ</span> Error';
     // If tempDiv exists, remove it
     const existingTemp = document.querySelector('.drafting-template[style*="-9999px"]');
     if (existingTemp) existingTemp.remove();
@@ -1206,9 +1206,9 @@ async function downloadLevelBrochurePDF(level) {
   tempDiv.innerHTML = `
     <div class="drafting-pdf-page premium-quote" style="width: 210mm; min-height: 297mm; padding: 20mm; background: #ffffff;">
       <div class="brochure-header">
-        <img src="logo.svg" alt="Design Aurora" class="brochure-logo" />
+        <img src="logo.jpeg" alt="SOZHA Design and Build" class="brochure-logo" />
         <div class="brochure-brand">
-          <h1>Design Aurora</h1>
+          <h1>SOZHA Design and Build</h1>
           <p>Architectural Service Brochure</p>
         </div>
       </div>
