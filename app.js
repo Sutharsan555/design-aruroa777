@@ -4,8 +4,8 @@ const PACKAGES = {
     name: "Basic Package",
     interiorRate: 15,
     elevationRate: 0,
-    discountMin: 5,
-    discountMax: 5,
+    discountMin: 0,
+    discountMax: 10,
     features: [
       "Basic interior design planning",
       "2D floor plans",
@@ -14,7 +14,7 @@ const PACKAGES = {
     rules: [
       "Elevation design is not included in this package",
       "Interior rate is fixed at ₹15 per sq ft",
-      "Standard discount of 5% applies",
+      "Discount of up to 10% applies",
       "1 revision included",
       "Suitable for small to medium projects"
     ]
@@ -23,8 +23,8 @@ const PACKAGES = {
     name: "Standard Package",
     interiorRate: 25,
     elevationRate: 12,
-    discountMin: 5,
-    discountMax: 7,
+    discountMin: 0,
+    discountMax: 10,
     features: [
       "Complete interior design",
       "3D renderings",
@@ -35,7 +35,7 @@ const PACKAGES = {
     rules: [
       "Interior rate fixed at ₹25 per sq ft",
       "Elevation rate fixed at ₹12 per sq ft (optional)",
-      "Discount range: 5% to 7%",
+      "Discount range: 0% to 10%",
       "2 design revisions included",
       "Best for medium-sized residential projects"
     ]
@@ -44,7 +44,7 @@ const PACKAGES = {
     name: "Luxury Package",
     interiorRate: 40,
     elevationRate: 20,
-    discountMin: 5,
+    discountMin: 0,
     discountMax: 10,
     features: [
       "Premium interior design",
@@ -58,7 +58,7 @@ const PACKAGES = {
     rules: [
       "Interior rate fixed at ₹40 per sq ft",
       "Elevation rate fixed at ₹20 per sq ft (optional)",
-      "Discount range: 5% to 10%",
+      "Discount range: 0% to 10%",
       "Unlimited design revisions",
       "Includes lighting and consultation services",
       "Dedicated project manager assigned",
@@ -351,7 +351,7 @@ function renderInvoice(data, calc) {
     );
   }
 
-  invoiceNotes.textContent = noteParts.join(" â€¢ ");
+  invoiceNotes.textContent = noteParts.join(" • ");
 
   // Render invoice rules/terms
   const invoiceRulesList = document.getElementById("invoiceRulesList");
@@ -370,7 +370,7 @@ function renderInvoice(data, calc) {
     pkg.rules.forEach(rule => {
       const p = document.createElement("p");
       p.className = "terms-item";
-      p.textContent = "â€¢ " + rule;
+      p.textContent = "• " + rule;
       rulesContainer.appendChild(p);
     });
 
@@ -397,7 +397,7 @@ function renderInvoice(data, calc) {
   generalRules.forEach(rule => {
     const p = document.createElement("p");
     p.className = "terms-item";
-    p.textContent = "â€¢ " + rule;
+    p.textContent = "• " + rule;
     generalTerms.appendChild(p);
   });
 
@@ -506,7 +506,7 @@ function generatePackageBanner(data) {
     </div>
     <div class="banner-rules">
       <h4>Package Terms</h4>
-      ${pkg.rules.map(rule => `<p>â€¢ ${rule}</p>`).join('')}
+      ${pkg.rules.map(rule => `<p>• ${rule}</p>`).join('')}
     </div>
   `;
 
@@ -610,7 +610,7 @@ function addExtraItemRow() {
       <input type="number" class="extra-rate" min="0" step="0.01" placeholder="e.g. 5000" />
     </div>
     <button type="button" class="remove-item-btn" aria-label="Remove item">
-      âœ•
+      ✕
     </button>
   `;
 
@@ -778,7 +778,7 @@ function showPackageModal(packageKey) {
   rulesDiv.innerHTML = "";
   pkg.rules.forEach(rule => {
     const p = document.createElement("p");
-    p.textContent = "â€¢ " + rule;
+    p.textContent = "• " + rule;
     rulesDiv.appendChild(p);
   });
 
@@ -879,7 +879,7 @@ function handleProjectTypeChange() {
     if (elevationSection) elevationSection.style.display = "grid";
     if (interiorHeading) interiorHeading.style.display = "block";
     if (interiorSection) interiorSection.style.display = "grid";
-    elevationHeading.textContent = "Exterior/Elevation (Optional)";
+    elevationHeading.textContent = "EXTERIOR/ELEVATION (OPTIONAL)";
   }
 }
 

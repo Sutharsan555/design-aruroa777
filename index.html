@@ -37,7 +37,7 @@
             <span class="icon">🎨</span> Portfolio Presentation
           </button>
           <button type="button" class="btn primary" id="printBrochureBtn">
-            <span class="icon">ðŸ–¨ï¸</span> Print Brochure
+            <span class="icon">🖨️</span> Print Brochure
           </button>
         </div>
         <p class="package-intro">Select the package that best suits your project needs.</p>
@@ -87,7 +87,7 @@
               <span class="amount" id="draftingTotal">₹ 0.00</span>
             </div>
             <button type="button" class="btn primary" id="printDraftingQuoteBtn">
-              <span class="icon">ðŸ–¨ï¸</span> Print 2D Quote
+              <span class="icon">🖨️</span> Print 2D Quote
             </button>
           </div>
         </div>
@@ -140,13 +140,13 @@
             <div class="field">
               <label for="discount">Overall discount (%) <span id="discountPackageLabel"
                   class="package-indicator"></span></label>
-              <input id="discount" type="number" min="5" max="10" step="0.1" value="5" />
-              <p class="field-help" id="discountHelp">Standard client discount between 5% and 10%.</p>
+              <input id="discount" type="number" min="0" max="10" step="0.1" value="0" />
+              <p class="field-help" id="discountHelp">Standard client discount between 0% and 10%.</p>
             </div>
           </div>
 
           <div id="designSections">
-            <h3 id="elevationHeading">Exterior/Elevation (Optional)</h3>
+            <h3 id="elevationHeading">EXTERIOR/ELEVATION (OPTIONAL)</h3>
             <div class="grid three-cols">
               <div class="field">
                 <label for="elevationArea">Elevation area (sq ft)</label>
@@ -166,7 +166,7 @@
               </div>
             </div>
 
-            <h3>Interior</h3>
+            <h3>INTERIOR</h3>
             <div class="grid three-cols">
               <div class="field">
                 <label for="interiorArea">Interior area (sq ft)</label>
@@ -230,11 +230,18 @@
       </section>
 
       <section class="card invoice-card">
+        <div style="text-align: center; margin-bottom: 24px; padding-top: 8px;">
+          <h1
+            style="font-size: 1.6rem; font-weight: 800; margin: 0 0 6px 0; color: var(--text-dark); letter-spacing: 0.5px;">
+            SOZHA DESIGN AND BUILD</h1>
+          <h2
+            style="font-size: 1.1rem; color: var(--text-soft); font-weight: 600; text-transform: uppercase; margin: 0; letter-spacing: 2px;">
+            Invoice</h2>
+        </div>
         <div class="invoice-header">
-          <div class="invoice-brand">
-            <img src="logo.png" alt="SOZHA Design and Build logo" class="brand-mark" />
-            <div>
-              <h2>Invoice</h2>
+          <div class="invoice-brand" style="align-items: flex-start;">
+            <img src="logo.png" alt="SOZHA Design and Build logo" class="brand-mark" style="margin-top: 2px;" />
+            <div style="margin-top: 6px;">
               <p class="invoice-meta" id="invoiceProject">Project: –</p>
               <p class="invoice-meta" id="invoiceClient">Client: –</p>
             </div>
@@ -366,7 +373,7 @@
               <ul class="brochure-rules">
                 <li>Interior rate fixed at ₹15/sq ft</li>
                 <li>Elevation not included</li>
-                <li>5% standard discount</li>
+                <li>Up to 10% discount</li>
                 <li>1 revision included</li>
               </ul>
             </div>
@@ -391,7 +398,7 @@
               <ul class="brochure-rules">
                 <li>Interior rate fixed at ₹25/sq ft</li>
                 <li>Elevation rate: ₹12/sq ft</li>
-                <li>Discount: 5% - 7%</li>
+                <li>Discount: 0% - 10%</li>
               </ul>
             </div>
           </div>
@@ -416,7 +423,7 @@
               <ul class="brochure-rules">
                 <li>Interior rate fixed at ₹40/sq ft</li>
                 <li>Elevation rate: ₹20/sq ft</li>
-                <li>Discount: 5% - 10%</li>
+                <li>Discount: 0% - 10%</li>
                 <li>Dedicated project manager</li>
               </ul>
             </div>
