@@ -1,5 +1,5 @@
 {
-  "name": "SOZHA Design and Build Invoice",
+  "name": "Design Aurora Invoice",
   "short_name": "Aurora Invoice",
   "start_url": ".",
   "display": "standalone",
@@ -7,12 +7,13 @@
   "theme_color": "#0c3d42",
   "icons": [
     {
-      "src": "logo.png",
+      "src": "logo.svg",
       "sizes": "512x512",
       "type": "image/svg+xml",
       "purpose": "any"
     }
   ]
 }
+
 
 

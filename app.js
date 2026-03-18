@@ -4,8 +4,8 @@ const PACKAGES = {
     name: "Basic Package",
     interiorRate: 15,
     elevationRate: 0,
-    discountMin: 0,
-    discountMax: 10,
+    discountMin: 5,
+    discountMax: 5,
     features: [
       "Basic interior design planning",
       "2D floor plans",
@@ -14,7 +14,7 @@ const PACKAGES = {
     rules: [
       "Elevation design is not included in this package",
       "Interior rate is fixed at ₹15 per sq ft",
-      "Discount of up to 10% applies",
+      "Standard discount of 5% applies",
       "1 revision included",
       "Suitable for small to medium projects"
     ]
@@ -23,8 +23,8 @@ const PACKAGES = {
     name: "Standard Package",
     interiorRate: 25,
     elevationRate: 12,
-    discountMin: 0,
-    discountMax: 10,
+    discountMin: 5,
+    discountMax: 7,
     features: [
       "Complete interior design",
       "3D renderings",
@@ -35,7 +35,7 @@ const PACKAGES = {
     rules: [
       "Interior rate fixed at ₹25 per sq ft",
       "Elevation rate fixed at ₹12 per sq ft (optional)",
-      "Discount range: 0% to 10%",
+      "Discount range: 5% to 7%",
       "2 design revisions included",
       "Best for medium-sized residential projects"
     ]
@@ -44,7 +44,7 @@ const PACKAGES = {
     name: "Luxury Package",
     interiorRate: 40,
     elevationRate: 20,
-    discountMin: 0,
+    discountMin: 5,
     discountMax: 10,
     features: [
       "Premium interior design",
@@ -58,19 +58,13 @@ const PACKAGES = {
     rules: [
       "Interior rate fixed at ₹40 per sq ft",
       "Elevation rate fixed at ₹20 per sq ft (optional)",
-      "Discount range: 0% to 10%",
+      "Discount range: 5% to 10%",
       "Unlimited design revisions",
       "Includes lighting and consultation services",
       "Dedicated project manager assigned",
       "Suitable for high-end luxury projects"
     ]
   }
-};
-
-const DRAFTING_RATES = {
-  basic: { rate: 3.5, label: "Basic 2D Layouts", desc: "Simple, dimensioned furniture layouts and spatial planning." },
-  architectural: { rate: 7.5, label: "Architectural Drafting", desc: "Construction-ready drawings, structural markers and dimensions." },
-  highend: { rate: 27.5, label: "High-End Drafting", desc: "Intricate architectural details and premium documentation." }
 };
 
 let selectedPackage = null;
@@ -96,10 +90,6 @@ function generateInvoiceId() {
     String(now.getHours()).padStart(2, "0") +
     String(now.getMinutes()).padStart(2, "0")
   );
-}
-
-function generateQuoteId() {
-  return generateInvoiceId().replace("INV", "QTE");
 }
 
 function getTodayString() {
@@ -140,7 +130,9 @@ function collectFormData() {
     .value.trim();
 
   const interiorAreaRaw = document.getElementById("interiorArea").value;
-  const interiorArea = parseNumberInput(interiorAreaRaw);
+  const interiorArea = interiorAreaRaw
+    ? parseNumberInput(interiorAreaRaw)
+    : siteArea;
   const interiorRate = parseNumberInput(
     document.getElementById("interiorRate").value
   );
@@ -177,10 +169,6 @@ function collectFormData() {
     interiorNotes,
     extraItems,
     selectedPackage,
-    draftingArea: parseNumberInput(document.getElementById("formDraftingArea").value) || siteArea,
-    draftingService: document.getElementById("formDraftingService").value,
-    draftingCustomRate: parseNumberInput(document.getElementById("formCustomDraftingRate").value),
-    draftingNotes: document.getElementById("formDraftingNotes").value.trim(),
   };
 }
 
@@ -225,36 +213,9 @@ function calculateInvoice(data) {
     });
   });
 
-  // Add 2D Drafting Service if selected in main form
-  if (data.draftingService || data.draftingCustomRate > 0) {
-    let rate = data.draftingCustomRate;
-    let label = "2D Drafting";
-
-    if (data.draftingService && DRAFTING_RATES[data.draftingService]) {
-      label = DRAFTING_RATES[data.draftingService].label;
-      if (rate <= 0) rate = DRAFTING_RATES[data.draftingService].rate;
-    }
-
-    if (rate > 0) {
-      items.push({
-        description: label + (data.draftingNotes ? " – " + data.draftingNotes : ""),
-        area: data.draftingArea,
-        rate: rate,
-        amount: data.draftingArea * rate,
-        isDrafting: true
-      });
-    }
-  }
-
   const subtotal = items.reduce((sum, item) => sum + item.amount, 0);
-
-  // Calculate discount only on items that are NOT 2D drafting
-  const discountableSubtotal = items
-    .filter(item => !item.isDrafting)
-    .reduce((sum, item) => sum + item.amount, 0);
-
   const discountAmount =
-    discountableSubtotal * (isNaN(data.discountPercent) ? 0 : data.discountPercent / 100);
+    subtotal * (isNaN(data.discountPercent) ? 0 : data.discountPercent / 100);
   const total = subtotal - discountAmount;
 
   return { items, subtotal, discountAmount, total };
@@ -402,194 +363,6 @@ function renderInvoice(data, calc) {
   });
 
   invoiceRulesList.appendChild(generalTerms);
-
-  // Generate package banner if package is selected
-  if (data.selectedPackage) {
-    generatePackageBanner(data);
-  }
-}
-
-function generatePackageBanner(data) {
-  if (!data.selectedPackage) return;
-
-  const pkg = PACKAGES[data.selectedPackage];
-  const bannerCard = document.getElementById("packageBannerCard");
-  const bannerClientInfo = document.getElementById("bannerClientInfo");
-  const bannerPackageDetails = document.getElementById("bannerPackageDetails");
-  const bannerPricing = document.getElementById("bannerPricing");
-  const bannerFeatures = document.getElementById("bannerFeatures");
-  const bannerPackageBadge = document.getElementById("bannerPackageBadge");
-  const bannerPackageName = document.getElementById("bannerPackageName");
-
-  // Show banner card
-  bannerCard.style.display = "block";
-
-  // Package badge
-  bannerPackageBadge.innerHTML = `<h2>${pkg.name}</h2>`;
-
-  // Package name at top
-  bannerPackageName.innerHTML = `<h2>${pkg.name}</h2>`;
-
-  // Client info
-  bannerClientInfo.innerHTML = `
-    <div class="banner-info-row">
-      <div class="banner-info-item">
-        <span class="banner-label">Client Name</span>
-        <span class="banner-value">${data.clientName || "–"}</span>
-      </div>
-      <div class="banner-info-item">
-        <span class="banner-label">Project Name</span>
-        <span class="banner-value">${data.projectName || "–"}</span>
-      </div>
-      <div class="banner-info-item">
-        <span class="banner-label">Date</span>
-        <span class="banner-value">${getTodayString()}</span>
-      </div>
-    </div>
-  `;
-
-  // Package details
-  bannerPackageDetails.innerHTML = `
-    <h3>Package Details</h3>
-    <div class="banner-detail-grid">
-      <div class="banner-detail-item">
-        <span class="banner-detail-label">Interior Rate</span>
-        <span class="banner-detail-value">${data.currency}${pkg.interiorRate}/sq ft</span>
-      </div>
-      ${pkg.elevationRate > 0 ? `
-        <div class="banner-detail-item">
-          <span class="banner-detail-label">Elevation Rate</span>
-          <span class="banner-detail-value">${data.currency}${pkg.elevationRate}/sq ft</span>
-        </div>
-      ` : ''}
-      <div class="banner-detail-item">
-        <span class="banner-detail-label">Site Area</span>
-        <span class="banner-detail-value">${data.siteArea.toLocaleString()} sq ft</span>
-      </div>
-      <div class="banner-detail-item">
-        <span class="banner-detail-label">Discount Range</span>
-        <span class="banner-detail-value">${pkg.discountMin}% - ${pkg.discountMax}%</span>
-      </div>
-    </div>
-  `;
-
-  // Pricing breakdown
-  const calc = calculateInvoice(data);
-  bannerPricing.innerHTML = `
-    <h3>Investment Summary</h3>
-    <div class="banner-pricing-details">
-      <div class="banner-price-row">
-        <span>Subtotal</span>
-        <span class="banner-price-value">${formatCurrency(calc.subtotal, data.currency)}</span>
-      </div>
-      <div class="banner-price-row">
-        <span>Discount (${data.discountPercent}%)</span>
-        <span class="banner-price-value">- ${formatCurrency(calc.discountAmount, data.currency)}</span>
-      </div>
-      <div class="banner-price-row banner-price-total">
-        <span>Total Investment</span>
-        <span class="banner-price-value">${formatCurrency(calc.total, data.currency)}</span>
-      </div>
-    </div>
-  `;
-
-  // Features
-  bannerFeatures.innerHTML = `
-    <h3>What's Included</h3>
-    <div class="banner-features-grid">
-      ${pkg.features.map(feature => `
-        <div class="banner-feature-item">
-          <span class="banner-feature-icon">✓</span>
-          <span>${feature}</span>
-        </div>
-      `).join('')}
-    </div>
-    <div class="banner-rules">
-      <h4>Package Terms</h4>
-      ${pkg.rules.map(rule => `<p>• ${rule}</p>`).join('')}
-    </div>
-  `;
-
-  // Show PDF download button
-  document.getElementById("downloadPdfBtn").style.display = "inline-flex";
-
-  // Show stamp on invoice
-  document.getElementById("companyStamp").style.display = "block";
-}
-
-async function downloadPackagePDF() {
-  const { jsPDF } = window.jspdf;
-
-  // Show loading state
-  const downloadBtn = document.getElementById("downloadPdfBtn");
-  const originalText = downloadBtn.textContent;
-  downloadBtn.textContent = "â³ Generating PDF...";
-  downloadBtn.disabled = true;
-
-  try {
-    // Create new PDF
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-
-    // Capture invoice section
-    const invoiceCard = document.querySelector('.invoice-card');
-    const invoiceCanvas = await html2canvas(invoiceCard, {
-      scale: 2,
-      backgroundColor: '#ffffff',
-      logging: false
-    });
-
-    const invoiceImgData = invoiceCanvas.toDataURL('image/png');
-    const invoiceImgWidth = pageWidth - 20;
-    const invoiceImgHeight = (invoiceCanvas.height * invoiceImgWidth) / invoiceCanvas.width;
-
-    // Add invoice to PDF
-    pdf.addImage(invoiceImgData, 'PNG', 10, 10, invoiceImgWidth, invoiceImgHeight);
-
-    // Add new page for banner if it exists
-    const bannerCard = document.getElementById("packageBannerCard");
-    if (bannerCard && bannerCard.style.display !== "none") {
-      pdf.addPage();
-
-      const bannerCanvas = await html2canvas(bannerCard, {
-        scale: 2,
-        backgroundColor: '#ffffff',
-        logging: false
-      });
-
-      const bannerImgData = bannerCanvas.toDataURL('image/png');
-      const bannerImgWidth = pageWidth - 20;
-      const bannerImgHeight = (bannerCanvas.height * bannerImgWidth) / bannerCanvas.width;
-
-      pdf.addImage(bannerImgData, 'PNG', 10, 10, bannerImgWidth, bannerImgHeight);
-    }
-
-    // Generate filename
-    const data = collectFormData();
-    const clientName = data.clientName ? data.clientName.replace(/[^a-z0-9]/gi, '_') : 'Client';
-    const packageName = data.selectedPackage ? PACKAGES[data.selectedPackage].name.replace(/[^a-z0-9]/gi, '_') : 'Package';
-    const date = new Date().toISOString().split('T')[0];
-    const filename = `DesignAurora_${packageName}_${clientName}_${date}.pdf`;
-
-    // Download PDF
-    pdf.save(filename);
-
-    // Reset button
-    downloadBtn.textContent = "✓ PDF Generated!";
-    setTimeout(() => {
-      downloadBtn.textContent = originalText;
-      downloadBtn.disabled = false;
-    }, 2000);
-
-  } catch (error) {
-    console.error('Error generating PDF:', error);
-    downloadBtn.textContent = "âŒ Error - Try again";
-    setTimeout(() => {
-      downloadBtn.textContent = originalText;
-      downloadBtn.disabled = false;
-    }, 2000);
-  }
 }
 
 function addExtraItemRow() {
@@ -639,121 +412,6 @@ function resetFormAndInvoice() {
   document.getElementById("invoiceNotes").textContent = "";
   document.getElementById("invoiceDate").textContent = "";
   document.getElementById("invoiceId").textContent = "";
-}
-
-async function downloadBrochurePDF() {
-  const downloadBtn = document.getElementById("downloadBrochureBtn");
-  if (!downloadBtn) return;
-  const originalText = downloadBtn.innerHTML;
-
-  // Show loading state
-  downloadBtn.innerHTML = '<span class="icon">â³</span> Generating Brochure...';
-  downloadBtn.disabled = true;
-
-  let iframe = null;
-
-  try {
-    // Create a hidden iframe to load brochure.html
-    iframe = document.createElement('iframe');
-    // Using visibility: hidden instead of display: none to ensure it has a layout
-    iframe.style.position = 'fixed';
-    iframe.style.left = '-9999px';
-    iframe.style.top = '0';
-    iframe.style.width = '1000px';
-    iframe.style.height = '1400px';
-    iframe.style.border = '0';
-    iframe.style.visibility = 'hidden';
-    document.body.appendChild(iframe);
-
-    // Wait for brochure to load
-    await new Promise((resolve, reject) => {
-      const timeout = setTimeout(() => reject(new Error("Timeout loading brochure")), 10000);
-      iframe.onload = () => {
-        clearTimeout(timeout);
-        resolve();
-      };
-      iframe.onerror = () => {
-        clearTimeout(timeout);
-        reject(new Error("Failed to load brochure.html"));
-      };
-      iframe.src = 'brochure.html';
-    });
-
-    const brochureDoc = iframe.contentDocument || iframe.contentWindow.document;
-
-    // Wait for images and fonts to be ready inside the iframe
-    await brochureDoc.fonts.ready;
-    const images = Array.from(brochureDoc.images);
-    await Promise.all(images.map(img => {
-      if (img.complete) return Promise.resolve();
-      return new Promise(resolve => {
-        img.onload = resolve;
-        img.onerror = resolve; // Don't block forever if image fails
-      });
-    }));
-
-    // Small extra delay to ensure rendering is stable
-    await new Promise(resolve => setTimeout(resolve, 800));
-
-    const pages = Array.from(brochureDoc.querySelectorAll('.page'));
-    const { jsPDF } = window.jspdf;
-
-    // Create landscape PDF
-    const pdf = new jsPDF('l', 'mm', 'a4');
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-
-    for (let i = 0; i < pages.length; i++) {
-      if (i > 0) pdf.addPage();
-
-      const canvas = await html2canvas(pages[i], {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        backgroundColor: '#020617',
-        allowTaint: true
-      });
-
-      const imgData = canvas.toDataURL('image/png');
-      pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight);
-    }
-
-    pdf.save('DesignAurora_Premium_Brochure.pdf');
-
-    // Reset button
-    downloadBtn.innerHTML = '<span class="icon">✓</span> Brochure Downloaded!';
-    setTimeout(() => {
-      downloadBtn.innerHTML = originalText;
-      downloadBtn.disabled = false;
-    }, 3000);
-
-  } catch (error) {
-    console.error('Error generating brochure PDF:', error);
-    downloadBtn.innerHTML = '<span class="icon">âŒ</span> Error - Try again';
-    setTimeout(() => {
-      downloadBtn.innerHTML = originalText;
-      downloadBtn.disabled = false;
-    }, 3000);
-  } finally {
-    // Ensure iframe is removed
-    if (iframe && iframe.parentNode) {
-      document.body.removeChild(iframe);
-    }
-  }
-}
-
-function printBrochure() {
-  const printWindow = window.open('brochure.html', '_blank');
-  if (printWindow) {
-    printWindow.onload = () => {
-      // Small delay to ensure styles and fonts are loaded
-      setTimeout(() => {
-        printWindow.print();
-      }, 500);
-    };
-  } else {
-    alert("Please allow pop-ups to open the brochure for printing.");
-  }
 }
 
 function showPackageModal(packageKey) {
@@ -824,15 +482,9 @@ function confirmPackageSelection() {
   discountInput.max = pkg.discountMax;
   discountInput.value = pkg.discountMin;
 
-  // Update discount label with package name
-  const discountPackageLabel = document.getElementById("discountPackageLabel");
-  if (discountPackageLabel) {
-    discountPackageLabel.textContent = `(${pkg.name})`;
-  }
-
-  const discountHelp = document.getElementById("discountHelp");
-  if (discountHelp) {
-    discountHelp.textContent = `${pkg.name} discount range: ${pkg.discountMin}% to ${pkg.discountMax}%`;
+  const discountHelp = discountInput.nextElementSibling;
+  if (discountHelp && discountHelp.classList.contains("field-help")) {
+    discountHelp.textContent = `Package discount range: ${pkg.discountMin}% to ${pkg.discountMax}%`;
   }
 
   closePackageModal();
@@ -879,7 +531,7 @@ function handleProjectTypeChange() {
     if (elevationSection) elevationSection.style.display = "grid";
     if (interiorHeading) interiorHeading.style.display = "block";
     if (interiorSection) interiorSection.style.display = "grid";
-    elevationHeading.textContent = "EXTERIOR/ELEVATION (OPTIONAL)";
+    elevationHeading.textContent = "Exterior/Elevation (Optional)";
   }
 }
 
@@ -933,57 +585,6 @@ document.addEventListener("DOMContentLoaded", () => {
     window.print();
   });
 
-  const downloadPdfBtn = document.getElementById("downloadPdfBtn");
-  if (downloadPdfBtn) {
-    downloadPdfBtn.addEventListener("click", downloadPackagePDF);
-  }
-
-  const downloadBrochureBtn = document.getElementById("downloadBrochureBtn");
-  if (downloadBrochureBtn) {
-    downloadBrochureBtn.addEventListener("click", downloadBrochurePDF);
-  }
-
-  const viewPortfolioBtn = document.getElementById("viewPortfolioBtn");
-  if (viewPortfolioBtn) {
-    viewPortfolioBtn.addEventListener("click", () => {
-      window.open('portfolio_booklet.html', '_blank');
-    });
-  }
-
-
-  const draftingAreaInput = document.getElementById("draftingArea");
-  const draftingServiceSelect = document.getElementById("draftingService");
-  const customDraftingRateInput = document.getElementById("customDraftingRate");
-  const printDraftingQuoteBtn = document.getElementById("printDraftingQuoteBtn");
-
-  if (draftingAreaInput && draftingServiceSelect && customDraftingRateInput) {
-    draftingAreaInput.addEventListener("input", updateDraftingCalculation);
-    draftingServiceSelect.addEventListener("change", () => {
-      const level = draftingServiceSelect.value;
-      if (level !== "0" && DRAFTING_RATES[level]) {
-        customDraftingRateInput.value = DRAFTING_RATES[level].rate;
-      }
-      updateDraftingCalculation();
-    });
-    customDraftingRateInput.addEventListener("input", updateDraftingCalculation);
-  }
-
-  // Form level autofill
-  const formDraftingServiceSelect = document.getElementById("formDraftingService");
-  const formCustomDraftingRateInput = document.getElementById("formCustomDraftingRate");
-  if (formDraftingServiceSelect && formCustomDraftingRateInput) {
-    formDraftingServiceSelect.addEventListener("change", () => {
-      const level = formDraftingServiceSelect.value;
-      if (level && DRAFTING_RATES[level]) {
-        formCustomDraftingRateInput.value = DRAFTING_RATES[level].rate;
-      }
-    });
-  }
-
-  if (printDraftingQuoteBtn) {
-    printDraftingQuoteBtn.addEventListener("click", downloadDraftingQuotePDF);
-  }
-
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     const data = collectFormData();
@@ -1014,271 +615,6 @@ document.addEventListener("DOMContentLoaded", () => {
       .register("service-worker.js")
       .catch((err) => console.error("SW registration failed", err));
   }
-
-  // New Brochure Print Action
-  const printBrochureBtn = document.getElementById("printBrochureBtn");
-  if (printBrochureBtn) {
-    printBrochureBtn.addEventListener("click", printBrochure);
-  }
 });
 
 
-function updateDraftingCalculation() {
-  const area = parseFloat(document.getElementById("draftingArea").value) || 0;
-  const rate = parseFloat(document.getElementById("customDraftingRate").value) || 0;
-  const totalDisplay = document.getElementById("draftingTotal");
-
-  if (area <= 0 || rate <= 0) {
-    totalDisplay.textContent = "₹ 0.00";
-    return;
-  }
-
-  const total = area * rate;
-  totalDisplay.textContent = `₹ ${total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-}
-
-async function downloadDraftingQuotePDF() {
-  const area = parseFloat(document.getElementById("draftingArea").value) || 0;
-  const rate = parseFloat(document.getElementById("customDraftingRate").value) || 0;
-  const level = document.getElementById("draftingService").value;
-
-  if (area <= 0 || rate <= 0) {
-    alert("Please enter area and a valid price per sq ft first.");
-    return;
-  }
-
-  const draftingBtn = document.getElementById("printDraftingQuoteBtn");
-  const originalText = draftingBtn.innerHTML;
-
-  // Visual feedback
-  draftingBtn.innerHTML = '<span class="icon">â³</span> Finalizing...';
-  draftingBtn.disabled = true;
-
-  try {
-    if (typeof window.jspdf === 'undefined' || typeof html2canvas === 'undefined') {
-      throw new Error("Required libraries (jsPDF or html2canvas) not loaded.");
-    }
-
-    const { jsPDF } = window.jspdf;
-
-    // Determine labels
-    let label = "Custom 2D Drafting";
-    let desc = "Professional architectural documentation at a custom rate.";
-    if (level !== "0" && DRAFTING_RATES[level]) {
-      label = DRAFTING_RATES[level].label;
-      desc = DRAFTING_RATES[level].desc;
-    }
-
-    // Create a temporary container for robust rendering
-    const tempDiv = document.createElement('div');
-    tempDiv.className = 'drafting-template';
-    tempDiv.style.position = 'fixed';
-    tempDiv.style.left = '-9999px';
-    tempDiv.style.top = '0';
-    tempDiv.style.display = 'block';
-
-    const quoteId = generateQuoteId();
-    const quoteDate = getTodayString();
-    const total = area * rate;
-
-    tempDiv.innerHTML = `
-      <div class="drafting-pdf-page premium-quote" style="width: 210mm; padding: 20mm; background: #ffffff;">
-        <div class="brochure-header">
-          <img src="logo.png" alt="SOZHA Design and Build" class="brochure-logo" />
-          <div class="brochure-brand">
-            <h1>SOZHA Design and Build</h1>
-            <p>Standalone Drafting Quote</p>
-          </div>
-        </div>
-
-        <div class="drafting-pdf-content">
-          <div class="quote-header-info">
-            <div class="quote-id-box">
-              <p class="label">Quote ID</p>
-              <p class="value">${quoteId}</p>
-            </div>
-            <div class="quote-date-box">
-              <p class="label">Date</p>
-              <p class="value">${quoteDate}</p>
-            </div>
-          </div>
-
-          <div class="quote-main-section" style="margin-top: 30px;">
-            <h2 class="section-title">Estimation Details</h2>
-            <div class="quote-detail-card" style="border-top: 4px solid #38bdf8; background: #f8fafc; padding: 25px; border-radius: 12px; border-left: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;">
-              <div class="quote-service-info">
-                <h3 style="color: #0f172a; margin-bottom: 5px; font-family: sans-serif;">${label}</h3>
-                <p style="color: #64748b; font-size: 0.9rem; font-family: sans-serif;">${desc}</p>
-              </div>
-              <div class="quote-pricing-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 25px; padding-top: 20px; border-top: 1px dashed rgba(15, 23, 42, 0.1);">
-                <div class="pricing-node">
-                  <span style="display: block; color: #64748b; font-size: 0.8rem; text-transform: uppercase;">Total Area</span>
-                  <span style="display: block; font-size: 1.25rem; font-weight: 700; color: #0f172a;">${area.toLocaleString()} <small style="font-size: 0.8rem; font-weight: 400;">sq ft</small></span>
-                </div>
-                <div class="pricing-node result">
-                  <span style="display: block; color: #38bdf8; font-size: 0.8rem; text-transform: uppercase;">Total Amount</span>
-                  <span style="display: block; font-size: 1.5rem; font-weight: 800; color: #0f172a;">₹ ${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="drafting-footer-note" style="margin-top: 60px;">
-            <p style="font-weight: 700; color: #0f172a; font-family: sans-serif;">Terms & Conditions:</p>
-            <ul style="font-size: 0.85rem; padding-left: 20px; color: #475569; line-height: 1.6; font-family: sans-serif;">
-              <li>This is a preliminary estimate and may vary based on site requirements.</li>
-              <li>Estimated delivery time: 3-5 working days per 1000 sq ft.</li>
-              <li>Valid for 30 days from the date of issue.</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="brochure-footer" style="padding: 20px 0; border-top: 1px solid rgba(15, 23, 42, 0.1); margin-top: 100px; display: flex; justify-content: space-between; align-items: center;">
-          <div class="brochure-contact">
-            <p style="color: #64748b; font-size: 0.85rem; font-family: sans-serif;">www.designaurora.com | sozhaarchitect@gmail.com</p>
-          </div>
-          <div class="brochure-stamp-area">
-            <img src="stamp.svg" alt="Official Stamp" style="width: 70px; opacity: 0.8;" />
-          </div>
-        </div>
-      </div>
-    `;
-
-    document.body.appendChild(tempDiv);
-
-    // Wait for images to load
-    const images = Array.from(tempDiv.querySelectorAll('img'));
-    await Promise.all(images.map(img => {
-      if (img.complete) return Promise.resolve();
-      return new Promise(resolve => {
-        img.onload = resolve;
-        img.onerror = resolve;
-      });
-    }));
-
-    // Ensure styles are applied before capture
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    const canvas = await html2canvas(tempDiv.querySelector('.premium-quote'), {
-      scale: 2, // Reducing scale slightly for better compatibility
-      useCORS: true,
-      allowTaint: true, // Added for file:// protocol support
-      backgroundColor: '#ffffff',
-      logging: false
-    });
-
-    document.body.removeChild(tempDiv);
-
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = (canvas.height * pageWidth) / canvas.width;
-
-    pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight);
-    pdf.save(`DesignAurora_DraftingQuote_${quoteId}.pdf`);
-
-    draftingBtn.innerHTML = '<span class="icon">✓</span> Printed!';
-  } catch (error) {
-    console.error('Error generating quote PDF:', error);
-    draftingBtn.innerHTML = '<span class="icon">âŒ</span> Error';
-    // If tempDiv exists, remove it
-    const existingTemp = document.querySelector('.drafting-template[style*="-9999px"]');
-    if (existingTemp) existingTemp.remove();
-  } finally {
-    setTimeout(() => {
-      draftingBtn.innerHTML = originalText;
-      draftingBtn.disabled = false;
-    }, 2000);
-  }
-}
-
-async function downloadLevelBrochurePDF(level) {
-  const { jsPDF } = window.jspdf;
-  const draftingData = DRAFTING_RATES[level];
-
-  // Use a temporary container for individual level brochure
-  const tempDiv = document.createElement('div');
-  tempDiv.className = 'drafting-template';
-  tempDiv.style.display = 'block';
-  tempDiv.style.position = 'fixed';
-  tempDiv.style.left = '-9999px';
-
-  tempDiv.innerHTML = `
-    <div class="drafting-pdf-page premium-quote" style="width: 210mm; min-height: 297mm; padding: 20mm; background: #ffffff;">
-      <div class="brochure-header">
-        <img src="logo.png" alt="SOZHA Design and Build" class="brochure-logo" />
-        <div class="brochure-brand">
-          <h1>SOZHA Design and Build</h1>
-          <p>Architectural Service Brochure</p>
-        </div>
-      </div>
-
-      <div class="drafting-pdf-content">
-        <div class="quote-main-section">
-          <h2 class="section-title">Drafting Service Level: ${draftingData.label}</h2>
-          <div class="quote-detail-card" style="border-top-color: #38bdf8;">
-            <div class="quote-service-info">
-              <h3>Service Overview</h3>
-              <p>${draftingData.desc}</p>
-              <p>Professional architectural drafting tailored to your specific project needs. Our ${draftingData.label} service ensures high-quality documentation for effective construction planning.</p>
-            </div>
-            <div class="quote-pricing-grid">
-              <div class="pricing-node">
-                <span class="node-label">Turnaround</span>
-                <span class="node-value">3-5 <small>Days</small></span>
-              </div>
-            </div>
-          </div>
-          
-          <div style="margin-top: 40px;">
-            <h3 style="color: #0f172a; border-bottom: 2px solid #38bdf8; display: inline-block; padding-bottom: 5px;">Key Inclusions</h3>
-            <ul style="margin-top: 15px; color: #475569; line-height: 1.8;">
-              <li>High-resolution 2D floor plans</li>
-              <li>Precise architectural dimensions</li>
-              <li>Material and spatial planning</li>
-              <li>Furniture layout integration</li>
-              <li>PDF & Source file delivery</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="drafting-footer-note" style="margin-top: 60px;">
-          <p><strong>Note:</strong> Pricing may vary slightly depending on the total area and project complexity.</p>
-        </div>
-      </div>
-
-      <div class="brochure-footer" style="padding: 20px 0; border-top: 1px solid rgba(15, 23, 42, 0.1); margin-top: 80px; display: flex; justify-content: space-between; align-items: center;">
-        <div class="brochure-contact">
-          <p>www.designaurora.com | sozhaarchitect@gmail.com</p>
-        </div>
-        <div class="brochure-stamp-area">
-          <img src="stamp.svg" alt="Official Stamp" style="width: 70px; opacity: 0.8;" />
-        </div>
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(tempDiv);
-
-  try {
-    const canvas = await html2canvas(tempDiv.querySelector('.premium-quote'), {
-      scale: 3,
-      useCORS: true,
-      backgroundColor: '#ffffff',
-      logging: false
-    });
-
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = (canvas.height * pageWidth) / canvas.width;
-
-    pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight);
-    pdf.save(`DesignAurora_${draftingData.label.replace(/\s+/g, '_')}_Brochure.pdf`);
-
-  } catch (error) {
-    console.error('Error generating level PDF:', error);
-  } finally {
-    document.body.removeChild(tempDiv);
-  }
-}
